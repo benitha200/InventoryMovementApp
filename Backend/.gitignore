@@ -1,0 +1,57 @@
+# Ignore compiled Python files
+*.pyc
+__pycache__
+
+# Ignore the virtual environment directory
+.env/
+
+# Ignore local development settings
+*.env
+
+# Ignore database files
+db.sqlite3
+
+# Ignore media and static files (upload and collected)
+media/
+static/
+
+# Ignore the secret key file
+*.secret_key
+
+# Ignore local settings
+local_settings.py
+
+# Ignore logs and other generated files
+logs/
+*.log
+
+# Ignore temporary files
+*.tmp
+
+# Ignore coverage reports
+htmlcov/
+
+# Ignore database migrations
+**/migrations/
+
+# Ignore node_modules directory
+node_modules/
+
+# Ignore environment-specific configuration files
+.env
+
+# Ignore IDE-specific files and directories
+.vscode/
+.idea/
+
+# Ignore user-specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Ignore any file with .pyc extension
+*.pyc
+
+# Ignore backup and swap files
+*~
+*.swp

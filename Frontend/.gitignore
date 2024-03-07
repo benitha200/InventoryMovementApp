@@ -1,0 +1,20 @@
+# Node.js
+node_modules
+.vite
+# Build artifacts
+/dist
+/.cache
+
+# IDE/Editor specific files
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
+.DS_Store
+
+# OS generated files
+ehthumbs.db
+Thumbs.db
