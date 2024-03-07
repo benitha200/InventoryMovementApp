@@ -99,3 +99,11 @@ class ProductionLogs(models.Model):
 
     class Meta:
         db_table="productionlogs"
+
+class Batch(models.Model):
+    batch_no=models.CharField(max_length=200)
+    quality=models.CharField(max_length=200)
+    created_at = models.DateField(auto_now_add=True)
+
+    class Meta:
+        db_table="batches"

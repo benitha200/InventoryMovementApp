@@ -416,3 +416,11 @@ class ProductionDataDetailsAPIView(APIView):
         serializer = ProductionDataSerializer(production_data, many=True)  # Replace with your serializer
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class BatchCreateAPIView(generics.CreateAPIView):
+    queryset=Batch.objects.all()
+    serializer_class=BatchSerializer
+
+class BatchListAPIView(generics.ListAPIView):
+    queryset=Batch.objects.all()
+    serializer_class=BatchSerializer

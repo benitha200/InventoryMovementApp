@@ -1,11 +1,14 @@
 import React, { useEffect, useState,useRef } from 'react';
 import { MultiSelect } from 'primereact/multiselect';
 import { Toast } from "primereact/toast";
+import { Dropdown } from 'primereact/dropdown';
 
 const ProductionMovement = () => {
   const [stockData, setStockData] = useState([]);
   const [selectedWRNs, setSelectedWRNs] = useState([]);
   const [formData, setFormData] = useState([]);
+  const [batches,setBatches]=useState([]);
+  const [selectedBatch,setSelectedBatch]=useState();
   const [processes,setProcesses]=useState([]);
   const [process,setProcess]=useState([]);
   const [batchNo,setBatchNo]=useState();
@@ -24,6 +27,20 @@ const ProductionMovement = () => {
       .then((result) => {
         console.log(result)
         setProcesses(result)
+      })
+      .catch((error) => console.error(error));
+  }
+  function get_batch(){
+    const requestOptions = {
+      method: "GET",
+      redirect: "follow"
+    };
+    
+    fetch("http://127.0.0.1:8000/batches/", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result)
+        setBatches(result)
       })
       .catch((error) => console.error(error));
   }
@@ -71,7 +88,7 @@ const ProductionMovement = () => {
     };
 
     fetchMaxBatchNo();
-
+    get_batch();
     fetchData();
     get_production_process()
   }, []);
@@ -152,7 +169,48 @@ const ProductionMovement = () => {
         <span className="text-cyan-700 text-3xl font-bold font-sans mb-4">
           MOVE TO PRODUCTION
         </span>
+        <div className="mb-4  pt-6">
+          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
+            Process
+          </label>
+          {/* <select
+            value={process}
+            onChange={(e) => setProcess(e.target.value)}
+            className="w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="process"
+            required
+          >
+            <option>Select Process</option>
+            {processes && processes.map((process) => (
+              <option key={process.id} value={process.id}>
+                {process.name}
+              </option>
+            ))}
+          </select> */}
+          <Dropdown
+            value={process}
+            onChange={(e) => setProcess(e.value)}
+            options={processes.map((process_) => ({ label: process_.name, value: process_.id }))}
+            optionLabel="label"
+            placeholder="Select Activity"
+            className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+          /> 
+        
+        </div>
+        <div className="mb-4">
+        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
+            Select Batch No
+          </label>
+          <Dropdown
+            value={selectedBatch}
+            onChange={(e) => setSelectedBatch(e.value)}
+            options={batches.map((batch) => ({ label: batch.batch_no, value: batch.id }))}
+            optionLabel="label"
+            placeholder="Select a Quality"
+            className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+          /> 
 
+        </div>
         <div className="flex justify-center p-2">
           <MultiSelect
             value={selectedWRNs}
@@ -168,10 +226,15 @@ const ProductionMovement = () => {
 
         {selectedWRNs.map((selectedWRN, index) => (
           <div key={index} className="mb-4">
-            <label className="block mb-1">
+            {/* <label className="block mb-1">
               <span>WRN: <strong>{selectedWRN.wrn} </strong></span><br/><span>Quantity In Stock <strong>{selectedWRN.quantity_kgs}</strong></span>
               <br/><span>Bags No <strong>{selectedWRN.bags_no}</strong></span>
-            </label>
+            </label> */}
+            <span className='font-sans'>
+                    WRN: <strong className='font-sans'>{selectedWRN.wrn}</strong> |
+                    Quantity In Stock <strong className='font-sans'>{selectedWRN.quantity_kgs}</strong> |
+                    Bags No <strong className='font-sans'>{selectedWRN.bags_no}</strong>
+                </span>
             <input
               type="number"
               name={`quantity_${index}`}
@@ -185,25 +248,7 @@ const ProductionMovement = () => {
           
         ))}
 
-        <div className="mb-4">
-          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
-            Process
-          </label>
-          <select
-            value={process}
-            onChange={(e) => setProcess(e.target.value)}
-            className="w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="process"
-            required
-          >
-            <option>Select Process</option>
-            {processes && processes.map((process) => (
-              <option key={process.id} value={process.id}>
-                {process.name}
-              </option>
-            ))}
-          </select>
-        </div>
+
 
         <button
           className="mx-auto shadow w-2/4 bg-cyan-500 hover:bg-cyan-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded mt-2"
