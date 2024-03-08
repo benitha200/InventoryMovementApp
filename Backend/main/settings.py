@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'supplier',
     'coffee',
     'production',
+    'exports',
 ]
 
 MIDDLEWARE = [
@@ -97,7 +98,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'inventory',
         'USER': 'root',
-        'PASSWORD': 'pass',
+        'PASSWORD': '12345',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
