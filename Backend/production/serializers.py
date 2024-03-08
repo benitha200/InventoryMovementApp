@@ -19,22 +19,10 @@ class ProductionProcessSerializer(serializers.ModelSerializer):
         model=ProductionProcess
         fields='__all__'
 
-# class ProductionDataSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model=ProductionData
-#         fields='__all__'
-
-# class ProductionDataSerializer(serializers.ModelSerializer):
-#     # stock = serializers.SerializerMethodField()
-#     # warehouse = serializers.CharField(source='warehouse.name')
-#     # section = serializers.CharField(source='section.name')
-#     # cell = serializers.CharField(source='cell.name')
-#     # processtype = serializers.CharField(source='processtype.type_name')
-#     # production_process = serializers.CharField(source='production_process.name')
-
-#     class Meta:
-#         model = ProductionData
-#         fields = '__all__'
+class BatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Batch
+        fields='__all__'
         
 class ProductionLogsSerializer(serializers.ModelSerializer):
     class Meta:

@@ -60,6 +60,8 @@ urlpatterns = [
     path('productionlogs/',ProductionLogsAPIView.as_view(),name='production-data'),
     path('productiondetails/',ProductionDataDetailsAPIView.as_view(),name='production-details'),
     
+    path('batches/create/',BatchCreateAPIView.as_view(),name="create-batch"),
+    path('batches/',BatchListAPIView.as_view(),name="get-batches"),
 
     path('changeprocess/',ProductionLogsCreateAPIView.as_view(),name='change-process'),
     path('max-batch-no/',MaxBatchNoAPIView.as_view(),name='max-batch-no'),
