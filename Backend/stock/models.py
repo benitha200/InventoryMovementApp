@@ -7,6 +7,7 @@ from supplier.models import Supplier
 # Create your models here.
 
 class Warehouse(models.Model):
+    warehouse_no=models.IntegerField()
     name=models.CharField(max_length=100)
 
     class Meta:
@@ -25,15 +26,39 @@ class Section(models.Model):
     def __str__(self) -> str:
         return self.name
 
+# class Cell(models.Model):
+#     warehouse=models.ForeignKey(Warehouse,on_delete=models.CASCADE,related_name='cells')
+#     section= models.ForeignKey(Section, on_delete=models.CASCADE)
+#     cell_no=models.CharField(max_length=200)
+#     cell_label=models.CharField(max_length=100)
+
+#     class Meta:
+#         db_table= "cell"
+#     def __str__(self) -> str:
+#         return self.name
+
 class Cell(models.Model):
-    warehouse=models.ForeignKey(Warehouse,on_delete=models.CASCADE,related_name='cells')
-    section= models.ForeignKey(Section, on_delete=models.CASCADE)
-    name=models.CharField(max_length=200)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, related_name='cells')
+    section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+    cell_label = models.CharField(max_length=100, blank=True)  # Allow blank initially
 
     class Meta:
-        db_table= "cell"
+        db_table = "cell"
+
     def __str__(self) -> str:
         return self.name
+
+    def save(self, *args, **kwargs):
+        warehouse_no = str(self.warehouse.warehouse_no) if self.warehouse else ''
+        section_name = str(self.section) if self.section else ''
+        cell_name = str(self.name) if self.name else ''
+        
+        # Combine warehouse_no, section_name, and cell_name to create cell_label
+        self.cell_label = warehouse_no + section_name + cell_name
+
+        super(Cell, self).save(*args, **kwargs)
+
     
 # class Supplier(models.Model):
 #       cell= models.ForeignKey(Section, on_delete=models.CASCADE)

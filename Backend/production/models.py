@@ -70,13 +70,32 @@ class ProductionData(models.Model):
     status=models.IntegerField(default=0)
     coffetype_id=models.IntegerField()
     processtype=models.ForeignKey(ProcessType,on_delete=models.CASCADE)
-    batch_no = models.CharField(max_length=5, unique=False, editable=False)
+    batch_no = models.CharField(max_length=50, unique=False, editable=False)
     production_process=models.ForeignKey(ProductionProcess,on_delete=models.CASCADE)
+    wrn=models.CharField(max_length=200)
     created_at = models.DateField(auto_now_add=True)
 
 
     class Meta:
         db_table="productiondata"
+
+class ProductionOutput(models.Model):
+    warehouse=models.CharField(max_length=200)
+    output_quantity=models.IntegerField()
+    output_bags=models.IntegerField()
+    coffetype_id=models.IntegerField()
+    processtype=models.ForeignKey(ProcessType,on_delete=models.CASCADE)
+    batch_no = models.CharField(max_length=50, unique=False, editable=False)
+    production_process=models.ForeignKey(ProductionProcess,on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+
+    class Meta:
+        db_table="production_output"
+
+
+
 
 
 

@@ -22,6 +22,7 @@ import InProductionMovementForm from "./components/Production/InProductionMoveme
 import ProductionLogs from "./components/Production/ProductionLogs";
 import InProductionDetails from "./components/Production/InProductionDetails";
 import CreateBatchForm from "./components/Production/CreateBatchForm";
+import InProductionComplete from "./components/Production/InProductionComplete";
 
 const itemRenderer = (item) => (
   <div className='p-menuitem-content bg-cyan-700 text-slate-100'>
@@ -41,7 +42,7 @@ const App = () => {
       template: () => (
         <span className="inline-flex align-items-center gap-1 px-2 py-2 bg-cyan-700 text-slate-100">
           {/* Your SVG or icon */}
-          <span className="mx-2 font-bold text-lg text-slate-0">Stock Movement</span>
+          <span className="mx-2 font-bold text-lg text-slate-0">Stock Activities</span>
         </span>
       )
     },
@@ -152,6 +153,7 @@ const App = () => {
             <Route path="/production-movement-form" element={<ProductionMovement/>}/>
             <Route path="/in-production" element={<InProduction/>}/>
             <Route path="/in-production-details" element={<InProductionDetails/>}/>
+            <Route path="/in-production-complete" element={<InProductionComplete/>}/>
             <Route path="/in-production-movement-form" element={<InProductionMovementForm/>}/>
             <Route path="/production-logs" element={<ProductionLogs/>}/>
           </Routes>

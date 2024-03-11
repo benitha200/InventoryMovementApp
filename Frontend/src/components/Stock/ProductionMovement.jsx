@@ -124,7 +124,7 @@ const ProductionMovement = () => {
         wrn: selectedWRN.wrn,
         quantity: parseInt(formData[index]?.quantity || 0),
         production_process:parseInt(process),
-        batchno:batchNo
+        batchno:selectedBatch
       };
 
       try {
@@ -147,7 +147,7 @@ const ProductionMovement = () => {
         toast.current.show({ 
           severity: 'success', 
           summary: 'Success', 
-          detail: `${responseData.message} \n "Batch No:" ${batchNo}`
+          detail: `${responseData.message} \n "Batch No:" ${selectedBatch}`
         });
       
         // selectedWRN
@@ -204,9 +204,9 @@ const ProductionMovement = () => {
           <Dropdown
             value={selectedBatch}
             onChange={(e) => setSelectedBatch(e.value)}
-            options={batches.map((batch) => ({ label: batch.batch_no, value: batch.id }))}
+            options={batches.map((batch) => ({ label: batch.batch_no, value: batch.batch_no }))}
             optionLabel="label"
-            placeholder="Select a Quality"
+            placeholder="Select a Batch No"
             className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
           /> 
 
