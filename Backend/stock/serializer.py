@@ -76,7 +76,7 @@ class StockInListSerializer(serializers.ModelSerializer):
         return obj.section.name
 
     def get_cell(self, obj):
-        return obj.cell.name
+        return obj.cell.cell_label
 
     def get_coffetype(self, obj):
         return obj.coffetype.name

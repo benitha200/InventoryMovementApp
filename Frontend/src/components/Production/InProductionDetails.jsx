@@ -7,12 +7,12 @@ import { DataTable } from 'primereact/datatable';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Column } from 'primereact/column';
+import { Link } from 'react-router-dom';
 
 const InProductionDetails = () => {
   const [productionData, setproductionData] = useState([]);
   const [selectedBatchNos, setselectedBatchNos] = useState([]);
   const [formData, setFormData] = useState([]);
-  const [processes,setProcesses]=useState([]);
   const [process,setProcess]=useState([]);
   const [processFrom,setProcessFrom]=useState();
   const toast=useRef(null)
@@ -21,20 +21,6 @@ const InProductionDetails = () => {
   const [stockData, setStockData] = useState(null);
   const [globalFilterValue, setGlobalFilterValue] = useState('');
 
-  // function get_production_process(){
-  //   const requestOptions = {
-  //     method: "GET",
-  //     redirect: "follow"
-  //   };
-    
-  //   fetch("http://127.0.0.1:8000/production-process/", requestOptions)
-  //     .then((response) => response.json())
-  //     .then((result) => {
-  //       console.log(result)
-  //       setProcesses(result)
-  //     })
-  //     .catch((error) => console.error(error));
-  // }
 
   useEffect(() => {
     const batchNosArray = new URLSearchParams(location.search).getAll('batch_nos');
@@ -74,42 +60,6 @@ fetch(apiUrl, requestOptions)
     setFormData([]);
   };
 
-  const handleProcessFromChange = (e)=>{
-    setProcessFrom(e.target.value)
-    const fetchData = async () => {
-        try {
-          const response = await fetch(`http://127.0.0.1:8000/productiondata/${e.target.value}/`);
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const result = await response.json();
-          setproductionData(result);
-        } catch (error) {
-          console.error('Error fetching stock data:', error);
-        }
-      };
-      
-  
-      fetchData();
-
-  }
-
-//   const handleInputChange = (index, name, value,selectedBatchNo) => {
-//     const newFormData = [...formData];
-//     newFormData[index] = { ...newFormData[index], [name]: value };
-//     if (name === 'quantity' && value > selectedBatchNo.net_quantity) {
-//         // Display error message
-//         messagesRef.current.show({
-//             severity: 'error',
-//             summary: 'Error Message',
-//             detail: 'Entered quantity is greater than net_quantity. Please enter a valid quantity.',
-//         });
-
-//         // Remove the entered quantity immediately
-//         value = '';
-//     }
-//     setFormData(newFormData);
-//   };
 
 const handleInputChange = (index, name, value,selectedBatchNo) => {
     const newFormData = [...formData];
@@ -186,6 +136,47 @@ const handleInputChange = (index, name, value,selectedBatchNo) => {
         </div>
     );
   };
+  const renderActions = (rowData) => {
+    console.log(rowData.bags);
+    return (
+        <div className='gap-2'>
+          <Link
+            to={{
+              pathname: "/in-production-complete",
+              search: `?production_process=${rowData.production_process.name}&bags=${rowData.bags}&quantity=${rowData.net_quantity}
+                          &created_at=${rowData.created_at}&batch_no=${rowData.batch_no}
+                          `,
+            
+            }}
+            className='m-2'
+          >
+            <button className='bg-green-500 text-white p-2 rounded-md w-full'>
+              Complete
+            </button>
+          </Link>
+          {/* <Link
+            to={{
+              pathname: "/production-movement-form",
+              search: `?wrn=${rowData.wrn}&coffetype=${rowData.coffetype}&processtype=${rowData.processtype}
+                          &quantity_kgs=${rowData.quantity_kgs}&bags=${rowData.bags_no}
+                         `,
+              state: {
+                wrn: rowData.wrn,
+                coffetype: rowData.coffetype,
+                processtype: rowData.processtyoe,
+                quantity_kgs: rowData.quantity_kgs,
+                bags:rowData.bags_no,
+              },
+            }}
+          >
+            <button className='bg-cyan-500 text-white p-2 rounded-md w-8'>
+              Exp
+            </button>
+          </Link> */}
+    
+        </div>
+      );
+  };
   const header = renderHeader();
   return (
     <div>
@@ -219,7 +210,7 @@ const handleInputChange = (index, name, value,selectedBatchNo) => {
         <Column field="status" header="Status" filter filterPlaceholder="" body={(rowData) => (rowData.status === 1 ? "Completed" : "Pending")}/>
         <Column
         header="Actions"
-        // body={renderActions}
+        body={renderActions}
         style={{ minWidth: '7rem' }} 
     />
     </DataTable>

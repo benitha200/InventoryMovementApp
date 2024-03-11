@@ -41,7 +41,13 @@ class ProductionDataSerializer(serializers.ModelSerializer):
     production_process=ProductionProcessSerializer()
     class Meta:
         model = ProductionData
-        fields = ['id','stock_quantity','net_quantity','bags','status','coffetype_id','batch_no','created_at','stock','warehouse','section','cell','processtype','production_process']
+        fields = ['id','stock_quantity','net_quantity','bags','status','coffetype_id','batch_no','created_at','stock','warehouse','section','cell','processtype','production_process','wrn']
+
+class ProductionOutputSerializer(serializers.ModelSerializer):
+    production_process=ProductionProcessSerializer()
+    class Meta:
+        model = ProductionOutput
+        fields = ['id','output_quantity','bags','batch_no','created_at','warehouse','processtype','production_process']
 
 class ProductionLogsSerializer(serializers.ModelSerializer):
     production = ProductionDataSerializer()

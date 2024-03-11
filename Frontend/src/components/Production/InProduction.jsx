@@ -101,19 +101,19 @@ export default function InProduction() {
 
     const renderActions = (rowData) => {
         // Implement your Production action logic here
-        // console.log("Production clicked for row with ID:", rowData.id);
+        console.log("Production clicked for row with ID:", rowData.production_process__name);
         return (
             <div className='gap-2'>
               <Link
                 to={{
                   pathname: "/in-production-details",
-                  search: `?wrn=${rowData.wrn}&coffetype=${rowData.coffetype}&processtype=${rowData.processtype}
+                  search: `?wrn=${rowData.wrn}&coffetype=${rowData.coffetype}&production_process=${rowData.production_process.name}
                               &quantity_kgs=${rowData.quantity_kgs}&bags=${rowData.bags_no}&batch_nos=${rowData.batch_nos}
                              `,
                   state: {
                     wrn: rowData.wrn,
                     coffetype: rowData.coffetype,
-                    processtype: rowData.processtyoe,
+                    production_process: rowData.production_process.name,
                     quantity_kgs: rowData.quantity_kgs,
                     bags:rowData.bags_no,
                   },

@@ -94,13 +94,13 @@ export default function StockData() {
         .then((response) => response.json())
         .then((result) => {
             const groupedData = result.reduce((acc, item) => {
-                const key = `${item.warehouse.name}-${item.section.name}-${item.cell.name}`;
+                const key = `${item.warehouse.name}-${item.section.name}-${item.cell.cell_label}`;
                 if (!acc[key]) {
                     acc[key] = {
                         id: item.id,
                         warehouse: item.warehouse.name,
                         section: item.section.name,
-                        cell: item.cell.name,
+                        cell: item.cell.cell_label,
                         coffetype: item.coffetype.name,
                         processtypes: [item.processtype.type_name],
                         suppliers: [item.supplier_name],
@@ -271,7 +271,7 @@ const contributionsFilter = (value, filter) => {
         <div>
             <div className='flex justify-between'>
                 <span className='text-cyan-700 text-3xl font-bold font-sans ...'>
-                STOCK
+                CURRENT STOCK 
             </span>
             <div className='flex gap-3'>
             <Link
