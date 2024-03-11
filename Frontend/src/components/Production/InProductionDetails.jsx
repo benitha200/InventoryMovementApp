@@ -143,7 +143,7 @@ const handleInputChange = (index, name, value,selectedBatchNo) => {
           <Link
             to={{
               pathname: "/in-production-complete",
-              search: `?production_process=${rowData.production_process.name}&bags=${rowData.bags}&quantity=${rowData.net_quantity}
+              search: `?production_process=${rowData.production_process.name}&production_process_id=${rowData.production_process.id}&bags=${rowData.bags}&quantity=${rowData.net_quantity}
                           &created_at=${rowData.created_at}&batch_no=${rowData.batch_no}
                           `,
             

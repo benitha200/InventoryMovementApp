@@ -82,6 +82,7 @@ class ProductionData(models.Model):
 class ProductionOutput(models.Model):
     warehouse=models.CharField(max_length=200)
     output_quantity=models.IntegerField()
+    output_quality=models.CharField(max_length=200)
     output_bags=models.IntegerField()
     coffetype_id=models.IntegerField()
     processtype=models.ForeignKey(ProcessType,on_delete=models.CASCADE)

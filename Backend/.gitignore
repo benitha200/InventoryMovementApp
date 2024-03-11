@@ -4,9 +4,11 @@ __pycache__
 
 # Ignore the virtual environment directory
 .env/
+.venv
 
 # Ignore local development settings
 *.env
+
 
 # Ignore database files
 db.sqlite3

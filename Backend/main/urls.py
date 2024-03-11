@@ -60,6 +60,8 @@ urlpatterns = [
     path('productionlogs/',ProductionLogsAPIView.as_view(),name='production-data'),
     path('productiondetails/',ProductionDataDetailsAPIView.as_view(),name='production-details'),
     path('productionbatchdetails/',ProductionBatchDetails.as_view(), name="production-batch-details"),
+    path('productionoutput/',ProductionOutCreateAPIView.as_view(),name="production-out"),
+    path('production-output-per-batch/',ProductionOutputBatchDetails.as_view(),name="Production Output Per Batch"),
     
     path('batches/create/',BatchCreateAPIView.as_view(),name="create-batch"),
     path('batches/',BatchListAPIView.as_view(),name="get-batches"),

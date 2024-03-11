@@ -104,6 +104,7 @@ const Cell = () => {
       id="warehouse"
       className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
     >
+      <option>Select Warehouse</option>
       {options && options.map(option => (
         <option key={option.id} value={option.id}>
           {option.name}
@@ -116,12 +117,14 @@ const Cell = () => {
     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="sectionName">
       Section
     </label>
+
     <select
       value={selectedSection}
       onChange={(e) => setSelectedSection(e.target.value)}
       id="warehouse"
       className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
     >
+      <option>Select Section</option>
       {section && section.map(option => (
         <option key={option.id} value={option.id}>
           {option.name}

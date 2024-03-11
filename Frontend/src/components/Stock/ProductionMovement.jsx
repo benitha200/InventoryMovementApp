@@ -2,6 +2,7 @@ import React, { useEffect, useState,useRef } from 'react';
 import { MultiSelect } from 'primereact/multiselect';
 import { Toast } from "primereact/toast";
 import { Dropdown } from 'primereact/dropdown';
+import { InputText } from 'primereact/inputtext';
 
 const ProductionMovement = () => {
   const [stockData, setStockData] = useState([]);
@@ -12,6 +13,8 @@ const ProductionMovement = () => {
   const [processes,setProcesses]=useState([]);
   const [process,setProcess]=useState([]);
   const [batchNo,setBatchNo]=useState();
+  // setNewBatch
+  const [newBatch,setNewBatch]=useState();
 
   const toast=useRef(null) 
   const toast2=useRef(null)
@@ -92,6 +95,17 @@ const ProductionMovement = () => {
     fetchData();
     get_production_process()
   }, []);
+
+  const handleBatchInputChange = (e) => {
+    // setBatchNo(e.target.value);
+    setNewBatch(e.target.value);
+    setSelectedBatch(null); // Clear the selection when the input changes
+  };
+
+  const handleBatchDropdownChange = (e) => {
+    setBatchNo(e.value);
+    setSelectedBatch(e.value);
+  };
 
   const handleWRNChange = (e) => {
     setSelectedWRNs(e.value);
@@ -198,7 +212,7 @@ const ProductionMovement = () => {
         
         </div>
         <div className="mb-4">
-        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
+        {/* <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
             Select Batch No
           </label>
           <Dropdown
@@ -208,8 +222,25 @@ const ProductionMovement = () => {
             optionLabel="label"
             placeholder="Select a Batch No"
             className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
-          /> 
+          />  */}
 
+      <div className="flex items-center w-full gap-2">
+            <Dropdown
+                      value={selectedBatch}
+                      options={batches.map((batch) => ({ label: batch.batch_no, value: batch.batch_no }))}
+                      onChange={handleBatchDropdownChange}
+                      placeholder="Select Batch No"
+                      className="ml-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+                    />
+            <InputText
+              value={batchNo}
+              onChange={handleBatchInputChange}
+              defaultValue="Select Batch"
+              placeholder="Enter Batch No"
+              className="w-full md:w-14rem bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+            />
+          
+          </div>
         </div>
         <div className="flex justify-center p-2">
           <MultiSelect
