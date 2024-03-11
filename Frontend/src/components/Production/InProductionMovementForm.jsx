@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { MultiSelect } from 'primereact/multiselect';
 import { Toast } from "primereact/toast";
 import { Message } from "primereact/message";
@@ -7,18 +7,18 @@ const InProductionMovementForm = () => {
   const [productionData, setproductionData] = useState([]);
   const [selectedBatchNos, setselectedBatchNos] = useState([]);
   const [formData, setFormData] = useState([]);
-  const [processes,setProcesses]=useState([]);
-  const [process,setProcess]=useState([]);
-  const [processFrom,setProcessFrom]=useState();
-  const toast=useRef(null)
+  const [processes, setProcesses] = useState([]);
+  const [process, setProcess] = useState([]);
+  const [processFrom, setProcessFrom] = useState();
+  const toast = useRef(null)
   const toast2 = useRef(null);
 
-  function get_production_process(){
+  function get_production_process() {
     const requestOptions = {
       method: "GET",
       redirect: "follow"
     };
-    
+
     fetch("http://127.0.0.1:8000/production-process/", requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -29,7 +29,7 @@ const InProductionMovementForm = () => {
   }
 
   useEffect(() => {
-    
+
     get_production_process()
   }, []);
 
@@ -39,59 +39,44 @@ const InProductionMovementForm = () => {
     setFormData([]);
   };
 
-  const handleProcessFromChange = (e)=>{
+  const handleProcessFromChange = (e) => {
     setProcessFrom(e.target.value)
     const fetchData = async () => {
-        try {
-          const response = await fetch(`http://127.0.0.1:8000/productiondata/${e.target.value}/`);
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const result = await response.json();
-          setproductionData(result);
-        } catch (error) {
-          console.error('Error fetching stock data:', error);
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/productiondata/${e.target.value}/`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
-      };
-      
-  
-      fetchData();
+        const result = await response.json();
+        setproductionData(result);
+      } catch (error) {
+        console.error('Error fetching stock data:', error);
+      }
+    };
+
+
+    fetchData();
 
   }
 
-//   const handleInputChange = (index, name, value,selectedBatchNo) => {
-//     const newFormData = [...formData];
-//     newFormData[index] = { ...newFormData[index], [name]: value };
-//     if (name === 'quantity' && value > selectedBatchNo.net_quantity) {
-//         // Display error message
-//         messagesRef.current.show({
-//             severity: 'error',
-//             summary: 'Error Message',
-//             detail: 'Entered quantity is greater than net_quantity. Please enter a valid quantity.',
-//         });
 
-//         // Remove the entered quantity immediately
-//         value = '';
-//     }
-//     setFormData(newFormData);
-//   };
 
-const handleInputChange = (index, name, value,selectedBatchNo) => {
+  const handleInputChange = (index, name, value, selectedBatchNo) => {
     const newFormData = [...formData];
 
     if (name === 'quantity' && value > selectedBatchNo.net_quantity) {
-        if (toast2.current) {
-            toast2.current.show({ severity: 'error', summary: 'Error Message', detail: 'Entered quantity is greater than Total quantity. Please enter a valid quantity.' });
-        }
+      if (toast2.current) {
+        toast2.current.show({ severity: 'error', summary: 'Error Message', detail: 'Entered quantity is greater than Total quantity. Please enter a valid quantity.' });
+      }
 
-        // Remove the entered quantity immediately from newFormData
-        newFormData[index] = { ...newFormData[index], [name]: '' };
+      // Remove the entered quantity immediately from newFormData
+      newFormData[index] = { ...newFormData[index], [name]: '' };
     } else {
-        newFormData[index] = { ...newFormData[index], [name]: value };
+      newFormData[index] = { ...newFormData[index], [name]: value };
     }
 
     setFormData(newFormData);
-};
+  };
 
   const handleSubmit = async () => {
     // Send each WRN with its corresponding quantity one by one
@@ -100,9 +85,9 @@ const handleInputChange = (index, name, value,selectedBatchNo) => {
       const data = {
         batch_no: selectedBatchNo.batch_no,
         moved_quantity: formData[index]?.quantity || 0,
-        production_process_from:parseInt(selectedBatchNo.production_process.id),
-        production_process_to:parseInt(process),
-        net_quantity:selectedBatchNo.net_quantity,
+        production_process_from: parseInt(selectedBatchNo.production_process.id),
+        production_process_to: parseInt(process),
+        net_quantity: selectedBatchNo.net_quantity,
       };
 
       try {
@@ -113,31 +98,31 @@ const handleInputChange = (index, name, value,selectedBatchNo) => {
           },
           body: JSON.stringify(data),
         });
-      
+
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-      
+
         const responseData = await response.json(); // Parse the JSON data
-      
+
         console.log(responseData);
-      
-        toast.current.show({ 
-          severity: 'success', 
-          summary: 'Success', 
+
+        toast.current.show({
+          severity: 'success',
+          summary: 'Success',
           detail: `${responseData.message} \n `
         });
-      
+
         // selectedBatchNo
         setselectedBatchNos([]);
-      
+
         console.log(`WRN: ${selectedBatchNo.wrn}, Quantity: ${data.quantity}`);
         console.log(`WRN: ${selectedBatchNo.quantity_kgs}, Quantity: ${data.quantity}`);
       } catch (error) {
         console.error('Error submitting data:', error);
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Oops! Error occurred in submission' });
       }
-      
+
     }
   };
 
@@ -185,24 +170,24 @@ const handleInputChange = (index, name, value,selectedBatchNo) => {
         {selectedBatchNos.map((selectedBatchNo, index) => (
           <div key={index} className="mb-4">
             <label className="block mb-1">
-                <span className='font-sans'>
-                    Batch: <strong className='font-sans'>{selectedBatchNo.batch_no}</strong> |
-                    Quantity In Stock <strong className='font-sans'>{selectedBatchNo.net_quantity}</strong> |
-                    Bags No <strong className='font-sans'>{selectedBatchNo.bags}</strong> |
-                    Production Process <strong className='font-sans'>{selectedBatchNo.production_process.name}</strong>
-                </span>
+              <span className='font-sans'>
+                Batch: <strong className='font-sans'>{selectedBatchNo.batch_no}</strong> |
+                Quantity In Stock <strong className='font-sans'>{selectedBatchNo.net_quantity}</strong> |
+                Bags No <strong className='font-sans'>{selectedBatchNo.bags}</strong> |
+                Production Process <strong className='font-sans'>{selectedBatchNo.production_process.name}</strong>
+              </span>
             </label>
             <input
               type="number"
               name={`quantity_${index}`}
               value={formData[index]?.quantity || ''}
-              onChange={(e) => handleInputChange(index, 'quantity', e.target.value,selectedBatchNo)}
+              onChange={(e) => handleInputChange(index, 'quantity', e.target.value, selectedBatchNo)}
               placeholder='Moved Quantity'
               className="w-full bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
             />
             <Toast ref={toast2} />
           </div>
-          
+
         ))}
 
         <div className="mb-4">
