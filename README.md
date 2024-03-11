@@ -1,2 +1,2 @@
 # InventoryMovementApp
-Inventory Movement App
+The Inventory Movement App
