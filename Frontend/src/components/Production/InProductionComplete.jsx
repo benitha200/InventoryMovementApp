@@ -4,7 +4,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Dropdown } from 'primereact/dropdown';
 import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/inplace';
-import { BreadCrumb } from 'primereact/breadcrumb';
+import { Calendar } from 'primereact/calendar';
 
 const InProductionComplete = () => {
     const [searchParams] = useSearchParams();
@@ -13,6 +13,7 @@ const InProductionComplete = () => {
     const [batchOutput, setBatchOutput] = useState();
     const [quantitykgs,setQuantityKgs]=useState();
     const [selectedCell,setSelectedCell]=useState();
+    const [completiondate, setCompletiondate] = useState(null);
 
     const [stockQuantityTotal, setStockQuantityTotal] = useState(0);
     const [bagsTotal, setBagsTotal] = useState(0);
@@ -33,8 +34,6 @@ const InProductionComplete = () => {
     ];
 
 
-    const items = [{ label: 'Electronics' }, { label: 'Computer' }, { label: 'Accessories' }, { label: 'Keyboard' }, { label: 'Wireless' }];
-    const home = { icon: 'pi pi-home', url: 'https://primereact.org', }
     
 
 
@@ -175,10 +174,36 @@ const InProductionComplete = () => {
     
   return (
     <div>
-        <div className='flex flex-col m-2 pb-3 text-cyan-900'>
-            <span className='uppercase text-xl font-bold text-u'>COMPLETE " {production_process} " </span>
-            <span className='text-xl'>BATCH NO: {batch_no} </span>
+            <div className='flex flex-row justify-between'>
+                <div className='flex flex-col m-2 gap-2 pb-3 text-cyan-900'>
+                    <span className='uppercase text-xl font-bold text-u'>COMPLETE " {production_process} " </span>
+                    <span className='text-xl'>BATCH NO: {batch_no} </span>
+                </div>
+            <div>
+            {/* <span className='p-2'>Completion Date</span> */}
+            {/* <input
+                type="text"
+                name="quantity"
+                value={quantitykgs}
+                onChange={(e) => setQuantityKgs(e.target.value)}
+                placeholder='Completion Date'
+                className="w-full h-12 mt- bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+            /> */}
+            <form  className='flex gap-2'>
+                <Calendar value={completiondate} placeholder='Completion Date' onChange={(e) => setCompletiondate(e.value)} required className='w-full border-2 border-gray-200 h-12 rounded py-2'/>
+            
+                <button
+                    type="submit"
+                    className="mx-auto pl-5 h-12 shadow bg-cyan-500 hover:bg-cyan-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
+                    >
+                    Complete
+                </button>
+            </form>
+            
             </div>
+            </div>
+            
+            
 
             <div className='gap-2 m-2 p-2'>
                 
@@ -205,7 +230,7 @@ const InProductionComplete = () => {
 
                 <Inplace className='mb-3 '>
                     <InplaceDisplay>
-                        <button className='bg-blue-400 p-3 text-gray-50 m-2' onClick={() => setVisible(true)}>
+                        <button className='bg-emerald-500 p-3 text-gray-50 mt-2 rounded' onClick={() => setVisible(true)}>
                             <span >Add New Output</span>
                         </button>
                     </InplaceDisplay>
