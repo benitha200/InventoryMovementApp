@@ -77,11 +77,11 @@ const App = () => {
           template: itemRenderer,
           to: '/production-logs'
         },
-        // {
-        //   label: 'Export',
-        //   template: itemRenderer,
-        //   to: '/in-production'
-        // },
+        {
+          label: 'Track Batch',
+          template: itemRenderer,
+          to: '/in-production'
+        },
         // {
         //   label: 'Track Batch',
         //   template: itemRenderer,
