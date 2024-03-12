@@ -144,7 +144,7 @@ const handleInputChange = (index, name, value,selectedBatchNo) => {
             to={{
               pathname: "/in-production-complete",
               search: `?production_process=${rowData.production_process.name}&production_process_id=${rowData.production_process.id}&bags=${rowData.bags}&quantity=${rowData.net_quantity}
-                          &created_at=${rowData.created_at}&batch_no=${rowData.batch_no}
+                          &created_at=${rowData.created_at}&batch_no=${rowData.sub_batch}
                           `,
             
             }}
@@ -193,7 +193,7 @@ const handleInputChange = (index, name, value,selectedBatchNo) => {
                 header={header}
             >
         <Column field="starting_date" header="Date"/>
-        <Column field="batch_no" header="Batch No" />
+        <Column field="sub_batch" header="Batch No" />
         <Column
             field="coffetype"
             header="Coffee Type"

@@ -159,17 +159,7 @@ export default function AdvancedFilterDemo() {
         return <InputNumber value={options.value} onChange={(e) => options.filterCallback(e.value, options.index)} mode="currency" currency="USD" locale="en-US" />;
     };
 
-    // const statusBodyTemplate = (rowData) => {
-    //     return <Tag value={rowData.status} severity={getSeverity(rowData.status)} />;
-    // };
 
-    // const statusFilterTemplate = (options) => {
-    //     return <Dropdown value={options.value} options={statuses} onChange={(e) => options.filterCallback(e.value, options.index)} itemTemplate={statusItemTemplate} placeholder="Select One" className="p-column-filter" showClear />;
-    // };
-
-    // const statusItemTemplate = (option) => {
-    //     return <Tag value={option} severity={getSeverity(option)} />;
-    // };
 
     const header = renderHeader();
 

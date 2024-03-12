@@ -125,6 +125,7 @@ class ProductionInCreateAPIView(APIView):
                 'processtype': stock_instance.processtype,
                 'production_process': production_process,
                 'batch_no':request.data['batchno'],
+                'sub_batch':request.data['sub_batch'],
                 'wrn':request.data['wrn']
             
             }
@@ -237,7 +238,7 @@ class ProductionBatchDetails(generics.ListAPIView):
         if not batch_no:
             return Response({"detail": "Batch numbers are required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        production_data = ProductionData.objects.filter(batch_no=batch_no)
+        production_data = ProductionData.objects.filter(sub_batch=batch_no)
         serializer = ProductionDataSerializer(production_data, many=True) 
 
         return Response(serializer.data, status=status.HTTP_200_OK)

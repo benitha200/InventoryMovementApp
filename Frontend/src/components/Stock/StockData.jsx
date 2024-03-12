@@ -318,7 +318,7 @@ const contributionsFilter = (value, filter) => {
     header={header}
 >
     <Column field="warehouse" header="Warehouse" filter filterPlaceholder="Search by Warehouse" />
-    <Column field="section" header="Section" filter filterPlaceholder="Search by Section" />
+    {/* <Column field="section" header="Section" filter filterPlaceholder="Search by Section" /> */}
     <Column field="cell" header="Cell" filter filterPlaceholder="Search by Cell" />
     <Column field="coffetype" header="Coffee Type" filter filterPlaceholder="Search by Coffee Type" />
     <Column field="processtypes" header="Process Type" filter filterPlaceholder="Search by Process Type" body={renderProcessTypes} />

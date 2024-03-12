@@ -210,16 +210,16 @@ const InProductionComplete = () => {
                 <div className="card bg-gray-200">
                 <span className='text-xl m-2 font-bold pb-5'>INPUT WRNs</span>
                     <DataTable value={batchdetails} tableStyle={{ minWidth: '50rem' }}>
-                        <Column field="warehouse" header="Warehouse"></Column>
-                        <Column field="section" header="Section"></Column>
-                        <Column field="cell" header="Cell"></Column>
+                        {/* <Column field="warehouse" header="Warehouse"></Column> */}
+                        {/* <Column field="section" header="Section"></Column> */}
+                        <Column field="cell.cell_label" header="Warehouse"></Column>
                         <Column field="wrn" header="WRN"></Column>
                         <Column field="net_quantity" header="Quantity"></Column>
                         
                     </DataTable>
-                    <div className="text-right mt-4">
+                    <div className="flex gap-2 text-center mt-4">
                         <span className="font-bold">Total Stock Quantity: {stockQuantityTotal}</span>
-                        <br />
+                        
                         <span className="font-bold">Total Bags: {bagsTotal}</span>
                     </div>
                 </div>

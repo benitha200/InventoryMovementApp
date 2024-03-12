@@ -71,9 +71,12 @@ class ProductionData(models.Model):
     coffetype_id=models.IntegerField()
     processtype=models.ForeignKey(ProcessType,on_delete=models.CASCADE)
     batch_no = models.CharField(max_length=50, unique=False, editable=False)
+    sub_batch=models.CharField(max_length=50, unique=False, editable=False)
     production_process=models.ForeignKey(ProductionProcess,on_delete=models.CASCADE)
     wrn=models.CharField(max_length=200)
+    cell_from=models.CharField(max_length=200)
     created_at = models.DateField(auto_now_add=True)
+    created_by=models.IntegerField(default=1)
 
 
     class Meta:

@@ -39,9 +39,11 @@ class ProductionDataGroupedSerializer(serializers.Serializer):
 
 class ProductionDataSerializer(serializers.ModelSerializer):
     production_process=ProductionProcessSerializer()
+    cell=CellSerializer()
+    # cell=CellSerializer()
     class Meta:
         model = ProductionData
-        fields = ['id','stock_quantity','net_quantity','bags','status','coffetype_id','batch_no','created_at','stock','warehouse','section','cell','processtype','production_process','wrn']
+        fields = ['id','stock_quantity','net_quantity','bags','status','coffetype_id','batch_no','created_at','stock','warehouse','section','cell','processtype','production_process','wrn','sub_batch','cell_from']
 
 class ProductionOutputSerializer(serializers.ModelSerializer):
     production_process=ProductionProcessSerializer()

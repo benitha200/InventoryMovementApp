@@ -15,6 +15,8 @@ const ProductionMovement = () => {
   const [batchNo, setBatchNo] = useState();
   const [lotNumber, setLotNumber] = useState('');
   const [grn, setGRN] = useState('');
+  const [cells,setCells]=useState('');
+  const [selectedCell,setSelectedCell]=useState();
 
   const [newBatch,setNewBatch]=useState();
 
@@ -72,49 +74,44 @@ const ProductionMovement = () => {
         console.error('Error fetching stock data:', error);
       }
     };
-    // const fetchMaxBatchNo = async () => {
-    //   try {
-    //     const response = await fetch("http://127.0.0.1:8000/max-batch-no/");
-    //     if (!response.ok) {
-    //       throw new Error('Network response was not ok');
-    //     }
-    //     const result = await response.json();
-    //     console.log(result);
-
-    //     let newBatchNo;
-
-    //     if (Object.keys(result).length === 0) {
-    //       newBatchNo = "00001";
-    //     } else {
-    //       let numericBatchNo = parseInt(result.max_batch_no, 10);
-    //       numericBatchNo++;
-
-    //       newBatchNo = String(numericBatchNo).padStart(result.max_batch_no.length, '0');
-    //     }
-
-    //     console.log(newBatchNo);
-    //     setBatchNo(newBatchNo);
-    //   } catch (error) {
-    //     console.error('Error fetching stock data:', error);
-    //   }
-    // };
-
-    fetchMaxBatchNo();
+    function get_cells(){
+      const requestOptions = {
+        method: "GET",
+        redirect: "follow"
+      };
+      
+      fetch(`http://127.0.0.1:8000/cell/`, requestOptions)
+        .then((response) => response.json())
+        .then((result) =>{ 
+          console.log("cells")
+          console.log(result)
+          setCells(result)
+        })
+        .catch((error) => console.error(error));
+    }
+    get_cells();
     get_batch();
     fetchData();
     get_production_process()
   }, []);
 
-  const handleBatchInputChange = (e) => {
-    // setBatchNo(e.target.value);
-    setNewBatch(e.target.value);
-    setSelectedBatch(null); // Clear the selection when the input changes
-  };
+  // const handleBatchInputChange = (e) => {
+  //   // setBatchNo(e.target.value);
+  //   setNewBatch(e.target.value);
+  //   // setSelectedBatch(null); // Clear the selection when the input changes
+  // };
 
   const handleBatchDropdownChange = (e) => {
     setBatchNo(e.value);
     setSelectedBatch(e.value);
   };
+
+  const handleBatchInputChange = (e) => {
+    setNewBatch(e.target.value);
+    // Clear the selection when the input changes
+    setSelectedBatch(null);
+  };
+  
 
   const handleWRNChange = (e) => {
     setSelectedWRNs(e.value);
@@ -137,22 +134,26 @@ const ProductionMovement = () => {
     setFormData(newFormData);
   };
 
-  const handleOriginCellChange = (index, selectedCells) => {
+  const handleOriginCellChange = (selectedCells) => {
     const newFormData = [...formData];
     newFormData[index] = { ...newFormData[index], originCell: selectedCells };
+    setSelectedCell(selectedCells)
     setFormData(newFormData);
   };
 
   const handleSubmit = async () => {
+    console.log(process)
     for (let index = 0; index < selectedWRNs.length; index++) {
       const selectedWRN = selectedWRNs[index];
       const data = {
-        wrn: selectedWRN.wrn,
+        wrn: selectedWRN.wrn || 0,
         quantity: parseInt(formData[index]?.quantity || 0),
         production_process: parseInt(process),
-        batchno: selectedBatch,
-        lotNumber: process === 'Rebagging' ? lotNumber : undefined,
-        grn: process === 'Repassing' ? grn : undefined
+        batchno: batchNo,
+        lotNumber: process === 'Rebagging' ? lotNumber : "",
+        grn: process === 'Repassing' ? grn : "",
+        cell_from: selectedCell,
+        sub_batch:newBatch
       };
 
       try {
@@ -173,7 +174,7 @@ const ProductionMovement = () => {
         toast.current.show({
           severity: 'success',
           summary: 'Success',
-          detail: `${responseData.message} \n "Batch No:" ${selectedBatch}`
+          detail: `${responseData.message} \n "Batch No:" ${newBatch}`
         });
 
         setSelectedWRNs([]);
@@ -198,7 +199,7 @@ const ProductionMovement = () => {
           <Dropdown
             value={process}
             onChange={(e) => setProcess(e.value)}
-            options={processes.map((process_) => ({ label: process_.name, value: process_.name }))}
+            options={processes.map((process_) => ({ label: process_.name, value: process_.id }))}
             optionLabel="label"
             placeholder="Select Activity"
             className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
@@ -245,7 +246,7 @@ const ProductionMovement = () => {
             className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
           />  */}
 
-      <div className="flex items-center w-full gap-2">
+          {/* <div className="flex items-center w-full gap-2">
             <Dropdown
                       value={selectedBatch}
                       options={batches.map((batch) => ({ label: batch.batch_no, value: batch.batch_no }))}
@@ -254,14 +255,32 @@ const ProductionMovement = () => {
                       className="ml-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
                     />
             <InputText
-              value={batchNo}
+              value={selectedBatch}
               onChange={handleBatchInputChange}
-              defaultValue="Select Batch"
+              defaultValue={selectedBatch}
               placeholder="Enter Batch No"
               className="w-full md:w-14rem bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
             />
           
+          </div> */}
+          <div className="flex items-center w-full gap-2">
+            <Dropdown
+              value={selectedBatch}
+              options={batches.map((batch) => ({ label: batch.batch_no, value: batch.batch_no }))}
+              onChange={handleBatchDropdownChange}
+              placeholder="Select Batch No"
+              className="bg-gray-200 h-14 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+            />
+            <input
+              type="text"
+              value={selectedBatch}
+              onChange={handleBatchInputChange}
+              placeholder="Enter Batch No"
+              className="w-full md:w-14rem h-14 bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+            />
           </div>
+
+
         </div>
         <div className="flex justify-center p-2">
           <MultiSelect
@@ -290,15 +309,15 @@ const ProductionMovement = () => {
               placeholder='Moved Quantity'
               className="w-full bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
             />
-            <input
+            {/* <input
               type="number"
               name={`moved_bags_${index}`}
               value={formData[index]?.movedBags || ''}
               onChange={(e) => handleInputChange(index, 'movedBags', e.target.value, selectedWRN)}
               placeholder='Moved Bags'
               className="w-full bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50 mt-2"
-            />
-            <MultiSelect
+            /> */}
+            {/* <MultiSelect
               value={formData[index]?.originCell || []}
               onChange={(e) => handleOriginCellChange(index, e.value)}
               options={originCellOptions}
@@ -306,7 +325,16 @@ const ProductionMovement = () => {
               placeholder="Select Origin Cell"
               maxSelectedLabels={3}
               className="w-full border-solid border-2 border-slate-400 md:w-10rem mt-2"
-            />
+            /> */}
+        <Dropdown
+            value={selectedCell}
+            onChange={(e) => setSelectedCell(e.target.value)}
+            options={cells && cells.map((cell) => ({ name: cell.cell_label, value: cell.cell_label }))}
+            optionLabel="name"
+            placeholder="Select Cell"
+            filter
+            className="w-full md:w-14rem h-12  border-2 border-gray-200 mt-2"
+             />            
             <Toast ref={toast2} />
           </div>
         ))}
