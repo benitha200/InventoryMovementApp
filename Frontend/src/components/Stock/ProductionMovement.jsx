@@ -8,16 +8,26 @@ const ProductionMovement = () => {
   const [stockData, setStockData] = useState([]);
   const [selectedWRNs, setSelectedWRNs] = useState([]);
   const [formData, setFormData] = useState([]);
-  const [batches,setBatches]=useState([]);
-  const [selectedBatch,setSelectedBatch]=useState();
-  const [processes,setProcesses]=useState([]);
-  const [process,setProcess]=useState([]);
-  const [batchNo,setBatchNo]=useState();
-  // setNewBatch
+  const [batches, setBatches] = useState([]);
+  const [selectedBatch, setSelectedBatch] = useState();
+  const [processes, setProcesses] = useState([]);
+  const [process, setProcess] = useState();
+  const [batchNo, setBatchNo] = useState();
+  const [lotNumber, setLotNumber] = useState('');
+  const [grn, setGRN] = useState('');
+
   const [newBatch,setNewBatch]=useState();
 
   const toast = useRef(null)
   const toast2 = useRef(null)
+
+  const originCellOptions = [
+    { label: 'A1', value: 'A1' },
+    { label: 'A2', value: 'A2' },
+    { label: 'B1', value: 'B1' },
+    { label: 'B2', value: 'B2' },
+    // Add more origin cell options as needed
+  ];
 
   function get_production_process() {
     const requestOptions = {
@@ -33,6 +43,7 @@ const ProductionMovement = () => {
       })
       .catch((error) => console.error(error));
   }
+
   function get_batch() {
     const requestOptions = {
       method: "GET",
@@ -61,34 +72,32 @@ const ProductionMovement = () => {
         console.error('Error fetching stock data:', error);
       }
     };
-    const fetchMaxBatchNo = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/max-batch-no/");
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const result = await response.json();
-        console.log(result);
+    // const fetchMaxBatchNo = async () => {
+    //   try {
+    //     const response = await fetch("http://127.0.0.1:8000/max-batch-no/");
+    //     if (!response.ok) {
+    //       throw new Error('Network response was not ok');
+    //     }
+    //     const result = await response.json();
+    //     console.log(result);
 
-        let newBatchNo;
+    //     let newBatchNo;
 
-        if (Object.keys(result).length === 0) {
-          newBatchNo = "00001";
-        } else {
-          let numericBatchNo = parseInt(result.max_batch_no, 10);
-          numericBatchNo++;
+    //     if (Object.keys(result).length === 0) {
+    //       newBatchNo = "00001";
+    //     } else {
+    //       let numericBatchNo = parseInt(result.max_batch_no, 10);
+    //       numericBatchNo++;
 
-          newBatchNo = String(numericBatchNo).padStart(result.max_batch_no.length, '0');
-        }
+    //       newBatchNo = String(numericBatchNo).padStart(result.max_batch_no.length, '0');
+    //     }
 
-        console.log(newBatchNo);
-        setBatchNo(newBatchNo);
-        //   console.log(result);
-        //   setBatchNo(result.batch_no);
-      } catch (error) {
-        console.error('Error fetching stock data:', error);
-      }
-    };
+    //     console.log(newBatchNo);
+    //     setBatchNo(newBatchNo);
+    //   } catch (error) {
+    //     console.error('Error fetching stock data:', error);
+    //   }
+    // };
 
     fetchMaxBatchNo();
     get_batch();
@@ -109,7 +118,6 @@ const ProductionMovement = () => {
 
   const handleWRNChange = (e) => {
     setSelectedWRNs(e.value);
-    // Reset form data when WRNs change
     setFormData([]);
   };
 
@@ -121,7 +129,6 @@ const ProductionMovement = () => {
         toast2.current.show({ severity: 'error', summary: 'Error Message', detail: 'Entered quantity is greater than Total quantity. Please enter a valid quantity.' });
       }
 
-      // Remove the entered quantity immediately from newFormData
       newFormData[index] = { ...newFormData[index], [name]: '' };
     } else {
       newFormData[index] = { ...newFormData[index], [name]: value };
@@ -130,15 +137,22 @@ const ProductionMovement = () => {
     setFormData(newFormData);
   };
 
+  const handleOriginCellChange = (index, selectedCells) => {
+    const newFormData = [...formData];
+    newFormData[index] = { ...newFormData[index], originCell: selectedCells };
+    setFormData(newFormData);
+  };
+
   const handleSubmit = async () => {
-    // Send each WRN with its corresponding quantity one by one
     for (let index = 0; index < selectedWRNs.length; index++) {
       const selectedWRN = selectedWRNs[index];
       const data = {
         wrn: selectedWRN.wrn,
         quantity: parseInt(formData[index]?.quantity || 0),
         production_process: parseInt(process),
-        batchno: selectedBatch
+        batchno: selectedBatch,
+        lotNumber: process === 'Rebagging' ? lotNumber : undefined,
+        grn: process === 'Repassing' ? grn : undefined
       };
 
       try {
@@ -154,9 +168,7 @@ const ProductionMovement = () => {
           throw new Error('Network response was not ok');
         }
 
-        const responseData = await response.json(); // Parse the JSON data
-
-        console.log(responseData);
+        const responseData = await response.json();
 
         toast.current.show({
           severity: 'success',
@@ -164,11 +176,7 @@ const ProductionMovement = () => {
           detail: `${responseData.message} \n "Batch No:" ${selectedBatch}`
         });
 
-        // selectedWRN
         setSelectedWRNs([]);
-
-        console.log(`WRN: ${selectedWRN.wrn}, Quantity: ${data.quantity}`);
-        console.log(`WRN: ${selectedWRN.quantity_kgs}, Quantity: ${data.quantity}`);
       } catch (error) {
         console.error('Error submitting data:', error);
         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Oops! Error occurred in submission' });
@@ -187,30 +195,43 @@ const ProductionMovement = () => {
           <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
             Process
           </label>
-          {/* <select
-            value={process}
-            onChange={(e) => setProcess(e.target.value)}
-            className="w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="process"
-            required
-          >
-            <option>Select Process</option>
-            {processes && processes.map((process) => (
-              <option key={process.id} value={process.id}>
-                {process.name}
-              </option>
-            ))}
-          </select> */}
           <Dropdown
             value={process}
             onChange={(e) => setProcess(e.value)}
-            options={processes.map((process_) => ({ label: process_.name, value: process_.id }))}
+            options={processes.map((process_) => ({ label: process_.name, value: process_.name }))}
             optionLabel="label"
             placeholder="Select Activity"
             className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
           />
-
         </div>
+        {process === 'Rebagging' && (
+          <div className="mb-4">
+            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
+              Lot Number
+            </label>
+            <input
+              type="text"
+              value={lotNumber}
+              onChange={(e) => setLotNumber(e.target.value)}
+              placeholder="Enter Lot Number"
+              className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+            />
+          </div>
+        )}
+        {process === 'Repassing' && (
+          <div className="mb-4">
+            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
+              GRN
+            </label>
+            <input
+              type="text"
+              value={grn}
+              onChange={(e) => setGRN(e.target.value)}
+              placeholder="Enter GRN"
+              className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+            />
+          </div>
+        )}
         <div className="mb-4">
         {/* <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
             Select Batch No
@@ -254,13 +275,8 @@ const ProductionMovement = () => {
             className="w-full border-solid border-2 border-slate-400 md:w-10rem"
           />
         </div>
-
         {selectedWRNs.map((selectedWRN, index) => (
           <div key={index} className="mb-4">
-            {/* <label className="block mb-1">
-              <span>WRN: <strong>{selectedWRN.wrn} </strong></span><br/><span>Quantity In Stock <strong>{selectedWRN.quantity_kgs}</strong></span>
-              <br/><span>Bags No <strong>{selectedWRN.bags_no}</strong></span>
-            </label> */}
             <span className='font-sans'>
               WRN: <strong className='font-sans'>{selectedWRN.wrn}</strong> |
               Quantity In Stock <strong className='font-sans'>{selectedWRN.quantity_kgs}</strong> |
@@ -274,59 +290,35 @@ const ProductionMovement = () => {
               placeholder='Moved Quantity'
               className="w-full bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
             />
+            <input
+              type="number"
+              name={`moved_bags_${index}`}
+              value={formData[index]?.movedBags || ''}
+              onChange={(e) => handleInputChange(index, 'movedBags', e.target.value, selectedWRN)}
+              placeholder='Moved Bags'
+              className="w-full bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50 mt-2"
+            />
+            <MultiSelect
+              value={formData[index]?.originCell || []}
+              onChange={(e) => handleOriginCellChange(index, e.value)}
+              options={originCellOptions}
+              optionLabel="label"
+              placeholder="Select Origin Cell"
+              maxSelectedLabels={3}
+              className="w-full border-solid border-2 border-slate-400 md:w-10rem mt-2"
+            />
             <Toast ref={toast2} />
           </div>
-
         ))}
-
-
-
-        <div className="flex justify-center p-2">
-          <MultiSelect
-            value={selectedWRNs}
-            onChange={handleWRNChange}
-            options={stockData}
-            optionLabel="wrn"
-            filter
-            placeholder="Select WRNs"
-            maxSelectedLabels={3}
-            className="w-full border-solid border-2 border-slate-400 md:w-10rem"
-          />
-        </div>
-
-        {
-          selectedWRNs.map((selectedWRN, index) => (
-            <div key={index} className="mb-4">
-              <label className="block mb-1">
-                <span>WRN: <strong>{selectedWRN.wrn} </strong></span><br /><span>Quantity In Stock <strong>{selectedWRN.quantity_kgs}</strong></span>
-                <br /><span>Bags No <strong>{selectedWRN.bags_no}</strong></span>
-              </label>
-              <input
-                type="number"
-                name={`quantity_${index}`}
-                value={formData[index]?.quantity || ''}
-                onChange={(e) => handleInputChange(index, 'quantity', e.target.value, selectedWRN)}
-                placeholder='Moved Quantity'
-                className="w-full bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
-              />
-              <Toast ref={toast2} />
-            </div>
-
-          ))
-        }
-
-
-
         <button
           className="mx-auto shadow w-2/4 bg-cyan-500 hover:bg-cyan-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded mt-2"
           onClick={handleSubmit}
         >
           Submit
         </button>
-      </div >
+      </div>
       <Toast ref={toast} />
-    </div >
-
+    </div>
   );
 };
 
