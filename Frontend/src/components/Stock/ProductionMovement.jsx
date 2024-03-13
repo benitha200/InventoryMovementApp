@@ -152,7 +152,7 @@ const ProductionMovement = () => {
       const data = {
         wrn: selectedWRN.wrn || 0,
         quantity: parseInt(formData[index]?.quantity || 0),
-        production_process: parseInt(process),
+        production_process: process,
         batchno: batchNo,
         lotNumber: process === 'Rebagging' ? lotNumber : "",
         grn: process === 'Repassing' ? grn : "",
@@ -327,7 +327,7 @@ const ProductionMovement = () => {
 
         </div>
         
-        {process === 'Processing' && (
+        {process === 'processing' && (
           <>
           
           <div className="flex justify-center p-2">
@@ -345,6 +345,7 @@ const ProductionMovement = () => {
         
 
         {selectedWRNs.map((selectedWRN, index) => (
+          <>
           <div key={index} className="mb-4">
             <span className='font-sans'>
               WRN: <strong className='font-sans'>{selectedWRN.wrn}</strong> |
@@ -360,9 +361,7 @@ const ProductionMovement = () => {
               className="w-full bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
             />
           </div>
-        ))}
-        
-            <input
+          <input
               type="number"
               name={`moved_bags_${index}`}
               value={formData[index]?.movedBags || ''}
@@ -370,7 +369,7 @@ const ProductionMovement = () => {
               placeholder='Moved Bags'
               className="w-full bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50 mt-2"
             />
-            <MultiSelect
+            {/* <MultiSelect
               value={formData[index]?.originCell || []}
               onChange={(e) => handleOriginCellChange(index, e.value)}
               options={originCellOptions}
@@ -378,7 +377,12 @@ const ProductionMovement = () => {
               placeholder="Select Origin Cell"
               maxSelectedLabels={3}
               className="w-full border-solid border-2 border-slate-400 md:w-10rem mt-2"
-            />
+            /> */}
+          </>
+          
+        ))}
+        
+            
         <Dropdown
             value={selectedCell}
             onChange={(e) => setSelectedCell(e.target.value)}

@@ -112,7 +112,7 @@ class ProductionInCreateAPIView(APIView):
                 stock_instance = Stock.objects.get(wrn=request.data['wrn'])
                 print(stock_instance)
 
-                production_process = ProductionProcess.objects.get(id=request.data['production_process'])
+                production_process = ProductionProcess.objects.get(name=request.data['production_process'])
 
                 production_data = {
                     'stock': stock_instance,

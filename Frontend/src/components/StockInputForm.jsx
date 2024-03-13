@@ -272,10 +272,10 @@ const StockInForm = () => {
                         </div>
                         <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
-                                Process Type
+                                Grade
                             </label>
                             <select value={selectedProcesstype} onChange={(e)=>setSelectedProcesstype(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="warehouse" required>
-                            <option>Select Process Type</option>
+                            <option>Select Grade</option>
                             {processtypes && processtypes.map(option => (
                                 <option key={option.id} value={option.id}>
                                     {option.description}
