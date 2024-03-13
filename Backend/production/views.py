@@ -319,6 +319,11 @@ class ProductionDataListView(generics.ListAPIView):
 
         return queryset
 
+
+class ExportDataListView(generics.ListAPIView):
+    queryset = ProductionOutput.objects.exclude(lot_no__isnull=True)
+    serializer_class=ProductionOutputSerializer
+
 class AllProductionDataListView(generics.ListAPIView):
     queryset=ProductionData.objects.all()
     serializer_class=ProductionDataSerializer

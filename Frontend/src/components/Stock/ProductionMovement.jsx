@@ -249,7 +249,7 @@ const ProductionMovement = () => {
             className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
           />
         </div>
-        {process === 'rebagging' && (
+        {process === 'Rebagging' && (
           <div className="mb-4">
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
               Lot Number
@@ -327,7 +327,7 @@ const ProductionMovement = () => {
 
         </div>
         
-        {process === 'processing' && (
+        {process === 'Processing' && (
           <>
           
           <div className="flex justify-center p-2">

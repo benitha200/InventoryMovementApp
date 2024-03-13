@@ -23,6 +23,7 @@ import ProductionLogs from "./components/Production/ProductionLogs";
 import InProductionDetails from "./components/Production/InProductionDetails";
 import CreateBatchForm from "./components/Production/CreateBatchForm";
 import InProductionComplete from "./components/Production/InProductionComplete";
+import ExportData from "./components/Export/ExportData";
 
 const itemRenderer = (item) => (
   <div className='p-menuitem-content bg-cyan-700 text-slate-100'>
@@ -82,11 +83,11 @@ const App = () => {
           template: itemRenderer,
           to: '/in-production'
         },
-        // {
-        //   label: 'Track Batch',
-        //   template: itemRenderer,
-        //   to: '/in-production'
-        // },
+        {
+          label: 'Export',
+          template: itemRenderer,
+          to: '/export-data'
+        },
         
         {
           label: 'Current Stock',
@@ -156,6 +157,7 @@ const App = () => {
             <Route path="/in-production-complete" element={<InProductionComplete/>}/>
             <Route path="/in-production-movement-form" element={<InProductionMovementForm/>}/>
             <Route path="/production-logs" element={<ProductionLogs/>}/>
+            <Route path="/export-data" element={<ExportData/>}/>
           </Routes>
         </div>
       </div>
