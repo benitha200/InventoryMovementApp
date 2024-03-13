@@ -108,53 +108,85 @@ class ProductionInCreateAPIView(APIView):
             bags = (net_quantity + 59) // 60
             
             # Retrieve the corresponding Stock instance based on WRN
-            stock_instance = Stock.objects.get(wrn=request.data['wrn'])
-            print(stock_instance)
+            if(request.data['wrn']):
+                stock_instance = Stock.objects.get(wrn=request.data['wrn'])
+                print(stock_instance)
 
-            production_process = ProductionProcess.objects.get(id=request.data['production_process'])
+                production_process = ProductionProcess.objects.get(id=request.data['production_process'])
 
-            production_data = {
-                'stock': stock_instance,
-                'warehouse': stock_instance.warehouse,
-                'section': stock_instance.section,
-                'cell': stock_instance.cell,
-                'coffetype_id': stock_instance.stock_in.coffetype.id,
-                'stock_quantity': stock_instance.quantity_kgs,
-                'net_quantity': net_quantity,  
-                'bags': bags,
-                'processtype': stock_instance.processtype,
-                'production_process': production_process,
-                'batch_no':request.data['batchno'],
-                'sub_batch':request.data['sub_batch'],
-                'wrn':request.data['wrn']
+                production_data = {
+                    'stock': stock_instance,
+                    'warehouse': stock_instance.warehouse,
+                    'section': stock_instance.section,
+                    'cell': stock_instance.cell,
+                    'coffetype_id': stock_instance.stock_in.coffetype.id,
+                    'stock_quantity': stock_instance.quantity_kgs,
+                    'net_quantity': net_quantity,  
+                    'bags': bags,
+                    'processtype': stock_instance.processtype,
+                    'production_process': production_process,
+                    'batch_no':request.data['batchno'],
+                    'sub_batch':request.data['sub_batch'],
+                    'wrn':request.data['wrn']
+                
+                }
+                if stock_instance.quantity_kgs < int(request.data['quantity']):
+                                return Response({"error": f"Quantity of {stock_instance} is greater than expected"}, status=status.HTTP_400_BAD_REQUEST)
+                stock_instance.quantity_kgs -= int(request.data['quantity'])
+                stock_instance.bags_no -= bags
+
+                
+
+                stock_instance.save()
+
+                production_instance = ProductionData.objects.create(**production_data)
+
+                # Get the batch_no after saving
+                request.data['batchno']
+
+                # Serialize and return the created ProductionIn instance along with batch_no
+                serializer = ProductionDataSerializer(production_instance)
+                response_data = {
+                    "message": "Production data successfully created.",
+                    "batch_no": request.data['batchno'],
+                    "data": serializer.data,
+                }
+                
+                return Response(response_data, status=status.HTTP_201_CREATED)
             
-            }
-            if stock_instance.quantity_kgs < int(request.data['quantity']):
-                            return Response({"error": f"Quantity of {stock_instance} is greater than expected"}, status=status.HTTP_400_BAD_REQUEST)
-            stock_instance.quantity_kgs -= int(request.data['quantity'])
-            stock_instance.bags_no -= bags
+            else:
+                print("Woow")
 
-            
+                production_process = ProductionProcess.objects.get(name=request.data['production_process'])
+                cell =Cell.objects.get(cell_label=request.data['cell_from'])
+                production_data = {
+                    'cell': cell,
+                    'coffetype_id': 1,
+                    # 'stock_quantity': stock_instance.quantity_kgs,
+                    'net_quantity': net_quantity,  
+                    'bags': bags,
+                    # 'processtype': stock_instance.processtype,
+                    'production_process': production_process,
+                    'batch_no':request.data['batchno'],
+                    'sub_batch':request.data['sub_batch'],
+                    # 'wrn':request.data['wrn']
+                
+                }
 
-            stock_instance.save()
+                production_instance = ProductionData.objects.create(**production_data)
 
-            production_instance = ProductionData.objects.create(**production_data)
+                # Get the batch_no after saving
+                request.data['batchno']
 
-            # Get the batch_no after saving
-            request.data['batchno']
+                serializer = ProductionDataSerializer(production_instance)
+                response_data = {
+                    "message": "Production data successfully created.",
+                    "batch_no": request.data['batchno'],
+                    "data": serializer.data,
+                }
+                
+                return Response(response_data, status=status.HTTP_201_CREATED)
 
-            # Serialize and return the created ProductionIn instance along with batch_no
-            serializer = ProductionDataSerializer(production_instance)
-            response_data = {
-                "message": "Production data successfully created.",
-                "batch_no": request.data['batchno'],
-                "data": serializer.data,
-            }
-            
-            return Response(response_data, status=status.HTTP_201_CREATED)
-
-        except Stock.DoesNotExist:
-            return Response({"error": "Stock not found for the provided WRN"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -167,11 +199,12 @@ class ProductionOutCreateAPIView(APIView):
             bags = (net_quantity + 59) // 60
             
             try:
-                batch_instance = ProductionData.objects.filter(batch_no=request.data['batch_no']).first()
+                batch_instance = ProductionData.objects.filter(sub_batch=request.data['batch_no']).first()
+                print(batch_instance)
             except ProductionData.DoesNotExist:
                 batch_instance = None
 
-            production_process = ProductionProcess.objects.get(id=request.data['production_process'])
+            production_process = ProductionProcess.objects.get(id=int(request.data['production_process']))
 
             production_data = {
                  'warehouse':request.data['warehouse'],
@@ -181,6 +214,7 @@ class ProductionOutCreateAPIView(APIView):
                  'coffetype_id':batch_instance.coffetype_id,
                  'processtype':batch_instance.processtype,
                  'batch_no':request.data['batch_no'],
+                 'lot_no':request.data['lot_no'],
                  'production_process':production_process
             
             }
@@ -196,6 +230,24 @@ class ProductionOutCreateAPIView(APIView):
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
+
+class ProductionCompleteAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+            try:
+                ProductionData.objects.filter(sub_batch=request.data['batch_no']).update(
+                    status=1,
+                    completion_date=request.data['completion_date']
+                )
+
+                response_data = {
+                    "message": "Successfully Completed Batch Processing.",
+                    # "data": serializer.data,
+                }
+                
+                return Response(response_data, status=status.HTTP_200_OK)
+
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
 
 class ProductionOutputBatchDetails(generics.ListAPIView):
     serializer_class=ProductionOutputSerializer

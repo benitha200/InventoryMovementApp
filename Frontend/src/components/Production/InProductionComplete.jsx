@@ -21,7 +21,11 @@ const InProductionComplete = () => {
     const [outputBags, setOutputBags] = useState(0);
     // const [outputbags,setOutputbags]=useState();
     const [cells,setCells]=useState();
+
+    // bagging off 
+    const [lotNo,setLotNo]=useState();
     const [selectedQuality, setSelectedQuantity] = useState(null);
+
     const qualities = [
         { name: 'F.SC.15.HP', code: 'F.SC.15.HP' },
         { name: 'F.CSR.15', code: 'F.CSR.15' },
@@ -122,7 +126,50 @@ const InProductionComplete = () => {
         get_cells();
     },[])
     
-
+    
+    const handleComplete = async (e) => {
+        
+        e.preventDefault();
+        console.log('Form submitted!');
+        console.log(completiondate);
+    
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+    
+        try {
+            const response = await fetch("http://127.0.0.1:8000/production-complete/", {
+                method: "POST",
+                headers: myHeaders,
+                body: JSON.stringify({
+                    batch_no: batch_no,
+                    completion_date: completiondate.toISOString().split('T')[0], // Extract YYYY-MM-DD
+                }),
+                redirect: "follow",
+            });
+    
+            const result = await response.json();
+    
+            if (response.ok) {
+                if (result.batch_no) {
+                    toast.current.show({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'You have successfully added a new item.',
+                    });
+                } else {
+                    // Handle other cases if needed
+                }
+            } else {
+                console.error('Error:', result);
+            }
+        } catch (error) {
+            // Handle fetch or other errors
+            console.error('Error:', error);
+        }
+    
+        // fetchbatchoutputdetails();
+  
+    };
 
     const handleSubmit = async (e) => {
         
@@ -144,6 +191,7 @@ const InProductionComplete = () => {
                     output_quality: selectedQuality?.name,
                     output_quantity: quantitykgs,
                     production_process: production_process_id,
+                    lot_no:lotNo || "-",
                 }),
                 redirect: "follow",
             });
@@ -169,6 +217,7 @@ const InProductionComplete = () => {
             console.error('Error:', error);
         }
     
+        fetchbatchoutputdetails();
   
     };
     
@@ -189,8 +238,14 @@ const InProductionComplete = () => {
                 placeholder='Completion Date'
                 className="w-full h-12 mt- bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
             /> */}
-            <form  className='flex gap-2'>
-                <Calendar value={completiondate} placeholder='Completion Date' onChange={(e) => setCompletiondate(e.value)} required className='w-full border-2 border-gray-200 h-12 rounded py-2'/>
+            <form onSubmit={handleComplete} className='flex gap-2'>
+                <Calendar value={completiondate} 
+                    placeholder='Completion Date' 
+                    onChange={(e) => setCompletiondate(e.value)} 
+                    required 
+                    className='w-full border-2 border-gray-200 h-12 rounded py-2'
+                    // dateFormat='yy-mm-dd'
+                    />
             
                 <button
                     type="submit"
@@ -203,9 +258,8 @@ const InProductionComplete = () => {
             </div>
             </div>
             
-            
-
-            <div className='gap-2 m-2 p-2'>
+            {production_process === 'processing' && (
+               <div className='gap-2 m-2 p-2'>
                 
                 <div className="card bg-gray-200">
                 <span className='text-xl m-2 font-bold pb-5'>INPUT WRNs</span>
@@ -215,6 +269,104 @@ const InProductionComplete = () => {
                         <Column field="cell.cell_label" header="Warehouse"></Column>
                         <Column field="wrn" header="WRN"></Column>
                         <Column field="net_quantity" header="Quantity"></Column>
+                        
+                    </DataTable>
+                    <div className="flex gap-2 text-center mt-4">
+                        <span className="font-bold">Total Stock Quantity: {stockQuantityTotal}</span>
+                        
+                        <span className="font-bold">Total Bags: {bagsTotal}</span>
+                    </div>
+                </div>
+
+                <div className="card bg-gray-200 mt-2">
+                {/* <div className='flex flex-row justify-between'> */}
+                    <span className='text-xl m-2 font-bold pb-5'>OUTPUT</span>
+
+                <Inplace className='mb-3 '>
+                    <InplaceDisplay>
+                        <button className='bg-emerald-500 p-3 text-gray-50 mt-2 rounded' onClick={() => setVisible(true)}>
+                            <span >Add New Output</span>
+                        </button>
+                    </InplaceDisplay>
+                    <InplaceContent>
+                        <div className='w-full bg-white shadow-sm rounded-md pt-2 '>
+                            <span className='text-xl m-2 font-bold pb-5'>ADD OUTPUT</span>
+                            <form onSubmit={handleSubmit}>
+                                <div className="w-full flex flex-row gap-3 p-4  rounded-md">
+                                    <div className='flex flex-col'>
+                                    <label className='p-2'>Warehouse</label>
+                                    <Dropdown
+                                        value={selectedCell}
+                                        onChange={(e) => setSelectedCell(e.value)}
+                                        options={cells && cells.map((cell) => ({ name: cell.cell_label, value: cell.cell_label }))}
+                                        optionLabel="name"
+                                        placeholder="Select Cell"
+                                        filter
+                                        className="w-full md:w-14rem h-12  border-2 border-gray-200"
+                                    />
+                                    </div>
+                                    <div className='flex flex-col'>
+                                    <span className='p-2'>Quantity</span>
+                                    <input
+                                        type="text"
+                                        name="quantity"
+                                        value={quantitykgs}
+                                        onChange={(e) => setQuantityKgs(e.target.value)}
+                                        placeholder='Quantity'
+                                        className="w-full h-12 mt- bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+                                    />
+                                    </div>
+                                    <div className='flex flex-col flex-wrap'>
+                                    <span className='p-2'>Quality</span>
+                                    <Dropdown
+                                        value={selectedQuality}
+                                        onChange={(e) => setSelectedQuantity(e.value)}
+                                        options={qualities}
+                                        optionLabel="name"
+                                        placeholder="Select a Quality"
+                                        className="w-full md:w-14rem h-12  bg-gray-200 appearance-none border-2 border-gray-200 rounded text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+                                    />
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        className="mx-auto p-2 shadow w-2/4 bg-cyan-500 hover:bg-cyan-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
+                                    >
+                                        Submit
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </InplaceContent>
+                </Inplace>
+                    <DataTable value={batchOutput} tableStyle={{ minWidth: '50rem' }}>
+                        <Column field="output_quality" header="Output"></Column>
+                        <Column field="output_quantity" header="Output Quantity"></Column>
+                        <Column field="output_bags" header="Output Bags"></Column>
+                        <Column field="warehouse" header="Warehouse"></Column>
+                    </DataTable>
+                    <div className="text-right mt-4">
+                        <span className="font-bold">Total Stock Quantity: {outputQuantity}</span>
+                        <br />
+                        <span className="font-bold">Total Bags: {outputBags}</span>
+                    </div>
+                </div>
+            </div> 
+            )}
+
+            {production_process === 'bagging off' && (
+               <div className='gap-2 m-2 p-2'>
+                
+                <div className="card bg-gray-200">
+                <span className='text-xl m-2 font-bold pb-5'>INPUT BATCH</span>
+                    <DataTable value={batchdetails} tableStyle={{ minWidth: '50rem' }}>
+                        {/* <Column field="warehouse" header="Warehouse"></Column> */}
+                        {/* <Column field="section" header="Section"></Column> */}
+                        <Column field="cell.cell_label" header="Warehouse"></Column>
+                        <Column field="sub_batch" header="Batch No"></Column>
+                        <Column field="bags" header="Bags"></Column>
+                        <Column field="net_quantity" header="Quantity"></Column>
+
                         
                     </DataTable>
                     <div className="flex gap-2 text-center mt-4">
@@ -267,6 +419,15 @@ const InProductionComplete = () => {
                                         placeholder="Select a Quality"
                                         className="w-full md:w-14rem h-12  bg-gray-200 appearance-none border-2 border-gray-200 rounded text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
                                     />
+                                    <span className='p-2'>Lot No</span>
+                                    <input
+                                        type="text"
+                                        name="quantity"
+                                        value={lotNo}
+                                        onChange={(e) => setLotNo(e.target.value)}
+                                        placeholder='Lot No'
+                                        className="w-full h-12 mt- bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+                                    />
 
                                     <button
                                         type="submit"
@@ -291,7 +452,10 @@ const InProductionComplete = () => {
                         <span className="font-bold">Total Bags: {outputBags}</span>
                     </div>
                 </div>
-            </div>
+            </div> 
+            )}
+
+            
     </div>
   )
 }

@@ -62,6 +62,7 @@ urlpatterns = [
     path('productionbatchdetails/',ProductionBatchDetails.as_view(), name="production-batch-details"),
     path('productionoutput/',ProductionOutCreateAPIView.as_view(),name="production-out"),
     path('production-output-per-batch/',ProductionOutputBatchDetails.as_view(),name="Production Output Per Batch"),
+    path('production-complete/',ProductionCompleteAPIView.as_view(),name='complete production'),
     
     path('batches/create/',BatchCreateAPIView.as_view(),name="create-batch"),
     path('batches/',BatchListAPIView.as_view(),name="get-batches"),
