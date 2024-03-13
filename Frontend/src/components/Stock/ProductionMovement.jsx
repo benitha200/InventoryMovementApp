@@ -393,7 +393,7 @@ const ProductionMovement = () => {
           </>
       )} 
 
-      {process === 'bagging off' && (
+      {process === 'Bagging Off' && (
         <>
       
                 <div className="mb-4">
