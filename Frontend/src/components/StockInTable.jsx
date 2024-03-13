@@ -77,7 +77,7 @@ export default function StockInHistory() {
                 <Column field="coffetype" header="Coffee Type" filter filterPlaceholder="Search by Coffee Type" />
                 <Column field="processtype" header="Process Type" filter filterPlaceholder="Search by Process Type" />
                 <Column field="supplier" header="Supplier" filter filterPlaceholder="Search by Supplier" />
-                <Column field="wrn" header="WRN" filter filterPlaceholder="Search by WRN" />
+                <Column field="wrn" header="WRN/GRN" filter filterPlaceholder="Search by WRN" />
                 <Column field="bags" header="Bags" filter filterPlaceholder="Search by Bags" />
                 <Column field="quantity_kgs" header="Quantity (kgs)" filter filterPlaceholder="Search by Quantity (kgs)" />
                 <Column field="created_at" header="Created At" filter filterPlaceholder="Search by Created At" />

@@ -317,13 +317,13 @@ const InProductionComplete = () => {
                                     />
                                     </div>
                                     <div className='flex flex-col flex-wrap'>
-                                    <span className='p-2'>Quality</span>
+                                    <span className='p-2'>Grade</span>
                                     <Dropdown
                                         value={selectedQuality}
                                         onChange={(e) => setSelectedQuantity(e.value)}
                                         options={qualities}
                                         optionLabel="name"
-                                        placeholder="Select a Quality"
+                                        placeholder="Select a Grade"
                                         className="w-full md:w-14rem h-12  bg-gray-200 appearance-none border-2 border-gray-200 rounded text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
                                     />
                                     </div>
