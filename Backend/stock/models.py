@@ -81,6 +81,7 @@ class StockIn(models.Model):
     quantity_kgs=models.IntegerField()
     created_at = models.DateField(auto_now_add=True)
     moisture_content=models.IntegerField()
+    delivered_date=models.DateField()
 
     class Meta:
         db_table="stock_in"

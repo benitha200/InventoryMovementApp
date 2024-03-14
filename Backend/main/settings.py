@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'coffee',
     'production',
     'exports',
+    'report'
 ]
 
 MIDDLEWARE = [

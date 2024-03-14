@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.db.models import Sum
+from django.db.models import Sum,F
 from rest_framework import generics
 from .models import Warehouse
 from .serializer import *
@@ -43,7 +43,18 @@ class CellCreateView(generics.CreateAPIView):
 class CellListView(generics.ListAPIView):
       queryset= Cell.objects.all()
       serializer_class=CellSerializer
-    
+
+class CellListViewPerWarehouse(generics.ListAPIView):
+    serializer_class = CellSerializer
+    lookup_url_kwarg = 'warehouse'
+
+    def get_queryset(self):
+        warehouse_id = self.kwargs.get(self.lookup_url_kwarg)
+        warehouse_id_str = str(warehouse_id)  # Convert warehouse_id to a string
+        queryset = Cell.objects.filter(cell_label__startswith=warehouse_id_str)
+
+        return queryset
+
 class CellAPIView(generics.ListAPIView):
     serializer_class = SectionSerializer
     lookup_url_kwarg = 'section'

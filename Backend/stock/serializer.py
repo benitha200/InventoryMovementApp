@@ -39,7 +39,7 @@ class SupplierSerializer(serializers.ModelSerializer):
 class StockInSerializer(serializers.ModelSerializer):
     class Meta:
         model=StockIn
-        fields = ['warehouse', 'section', 'cell', 'coffetype', 'processtype', 'supplier', 'bags', 'quantity_kgs','moisture_content']
+        fields = ['warehouse', 'section', 'cell', 'coffetype', 'processtype', 'supplier', 'bags', 'quantity_kgs','moisture_content','delivered_date']
         
 class StockSerializer(serializers.ModelSerializer):
     class Meta:
