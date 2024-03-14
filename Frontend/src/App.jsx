@@ -24,6 +24,7 @@ import InProductionDetails from "./components/Production/InProductionDetails";
 import CreateBatchForm from "./components/Production/CreateBatchForm";
 import InProductionComplete from "./components/Production/InProductionComplete";
 import ExportData from "./components/Export/ExportData";
+import Reports from "./components/Reports/Reports";
 
 const itemRenderer = (item) => (
   <div className='p-menuitem-content bg-cyan-700 text-slate-100'>

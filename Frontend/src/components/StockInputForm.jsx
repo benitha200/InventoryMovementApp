@@ -1,5 +1,6 @@
 import React, { useEffect, useState,useRef } from "react";
 import { Toast } from "primereact/toast";
+import { Calendar } from "primereact/calendar";
 
 const StockInForm = () => {
 
@@ -16,7 +17,8 @@ const StockInForm = () => {
     const [selectedCoffeetype,setelectedCoffeetype]=useState()
     const [processtypes,setProcesstypes]=useState()
     const [selectedProcesstype,setSelectedProcesstype]=useState()
-    // const [selectedCell,setSelectedCell]=useState()
+    const [startDate,setStartDate]=useState()
+    
     const [bags,setBags]=useState()
     const [quantity, setQuantity] = useState('');
     const [moisturecontent,setMoisturecontent]=useState()
@@ -37,22 +39,38 @@ const StockInForm = () => {
         setSelectedWarehouse(e.target.value)
         console.log(e.target.value)
 
-        function get_sections(){
+        // function get_sections(){
+        //     const requestOptions = {
+        //       method: "GET",
+        //       redirect: "follow"
+        //     };
+            
+        //     fetch(`http://127.0.0.1:8000/section/${e.target.value}/`, requestOptions)
+        //       .then((response) => response.json())
+        //       .then((result) =>{ 
+                
+        //         console.log(result)
+        //         setSection(result)
+        //       })
+        //       .catch((error) => console.error(error));
+        //   }
+        //   get_sections()
+        function get_cells(){
             const requestOptions = {
               method: "GET",
               redirect: "follow"
             };
             
-            fetch(`http://127.0.0.1:8000/section/${e.target.value}/`, requestOptions)
+            fetch(`http://127.0.0.1:8000/cell/${e.target.value}/`, requestOptions)
               .then((response) => response.json())
               .then((result) =>{ 
-                
+                console.log("cells")
                 console.log(result)
-                setSection(result)
+                setCells(result)
               })
               .catch((error) => console.error(error));
           }
-          get_sections()
+          get_cells()
     }
 
     function handlecoffeetypechange(e){
@@ -212,7 +230,7 @@ const StockInForm = () => {
                                 ))}
                             </select>
                         </div>
-                        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        {/* <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
                                 Section
                             </label>
@@ -225,11 +243,8 @@ const StockInForm = () => {
                                 </option>
                                 ))}
                             </select>
-                        </div>
-                        
-                    </div>
-                    <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        </div> */}
+                        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
                                 Cell
                             </label>
@@ -237,11 +252,14 @@ const StockInForm = () => {
                             <option>Select Cell</option>
                             {cells && cells.map(option => (
                                 <option key={option.id} value={option.id}>
-                                    {option.name}
+                                    {option.cell_label}
                                 </option>
                                 ))}
                             </select>
                         </div>
+                    </div>
+                    <div className="flex flex-wrap -mx-3 mb-6">
+                    
                         <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
                                 Supplier
@@ -255,9 +273,7 @@ const StockInForm = () => {
                                 ))}
                             </select>
                         </div>
-                    </div>
-                    <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
                                 Coffe Type
                             </label>
@@ -270,6 +286,9 @@ const StockInForm = () => {
                                 ))}
                             </select>
                         </div>
+                    </div>
+                    <div className="flex flex-wrap -mx-3 mb-6">
+                    
                         <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
                                 Grade
@@ -283,9 +302,7 @@ const StockInForm = () => {
                                 ))}
                             </select>
                         </div>
-                    </div>
-                    <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="quantity">
                         Quantity
                         </label>
@@ -300,6 +317,9 @@ const StockInForm = () => {
                         required
                         />
                     </div>
+                    </div>
+                    <div className="flex flex-wrap -mx-3 mb-6">
+                    
                     <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="numberOfBags">
                         Number of Bags
@@ -315,9 +335,6 @@ const StockInForm = () => {
                         required
                         />
                     </div>
-                    
-                    </div>
-                    <div className="flex flex-wrap -mx-3 mb-6">
                     <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="quantity">
                         Moisture Content
@@ -333,11 +350,22 @@ const StockInForm = () => {
                         required
                         />
                     </div>
-                    {/* <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                    </div>
+                    <div className="flex flex-wrap -mx-3 mb-6">
+                    
+                    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="numberOfBags">
                         Number of Bags
                         </label>
-                        <input
+                        <Calendar
+                            id="buttondisplay"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.value)}
+                            showIcon
+                            className="w-full md:w-14rem h-10 border-2 border-s-slate-200 rounded"
+                            />
+              
+                        {/* <input
                         value={bags}
                         // onChange={handleBagsChange}
                         readOnly
@@ -346,8 +374,8 @@ const StockInForm = () => {
                         type="number"
                         placeholder="Number of Bags"
                         required
-                        />
-                    </div> */}
+                        /> */}
+                    </div>
                     
                     </div>
                     <div className="flex flex-wrap -mx-3 mb-6">
