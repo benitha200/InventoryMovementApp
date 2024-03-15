@@ -20,6 +20,7 @@ const StockInForm = () => {
     const [startDate,setStartDate]=useState()
     
     const [bags,setBags]=useState()
+    const [bagsNo,setBagsNo]=useState()
     const [quantity, setQuantity] = useState('');
     const [moisturecontent,setMoisturecontent]=useState()
 
@@ -180,7 +181,7 @@ const StockInForm = () => {
         "processtype": selectedProcesstype,
         "supplier": selectedSupplier,
         "wrn": wrn,
-        "bags": bags,
+        "bags": bagsNo,
         "quantity_kgs": quantity,
         "delivered_date":startDate.toISOString().split('T')[0],
         "moisture_content":parseInt(moisturecontent)
@@ -323,11 +324,11 @@ const StockInForm = () => {
                     
                     <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="numberOfBags">
-                        Number of Bags
+                        Number of Bags(Est. Bags <span className="text-orange-400">{bags} Bgs</span> )
                         </label>
                         <input
-                        value={bags}
-                        // onChange={handleBagsChange}
+                        value={bagsNo}
+                        onChange={(e)=>setBagsNo(e.target.value)}
                         readOnly
                         className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                         id="numberOfBags"

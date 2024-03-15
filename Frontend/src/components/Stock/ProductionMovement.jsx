@@ -327,7 +327,7 @@ const ProductionMovement = () => {
 
         </div>
         
-        {process === 'processing' && (
+        {process === 'Processing' && (
           <>
           
           <div className="flex justify-center p-2">
@@ -383,7 +383,7 @@ const ProductionMovement = () => {
         ))}
         
             
-        <Dropdown
+        {/* <Dropdown
             value={selectedCell}
             onChange={(e) => setSelectedCell(e.target.value)}
             options={cells && cells.map((cell) => ({ name: cell.cell_label, value: cell.cell_label }))}
@@ -391,7 +391,7 @@ const ProductionMovement = () => {
             placeholder="Select Cell"
             filter
             className="w-full md:w-14rem h-12  border-2 border-gray-200 mt-2"
-             />            
+             />             */}
             <Toast ref={toast2} />
           
           </>

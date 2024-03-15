@@ -139,7 +139,7 @@ const Reports = () => {
           <div className="flex justify-content-end m-3">
                 {report && (
                 <CSVLink data={report} headers={csvHeaders} filename="StockInReport.csv">
-                    <Button type="button" icon="pi pi-file-excel" label="Download Excel" className="bg-teal-400 text-gray-100 p-3" onClick={exportCSV} />
+                    <Button type="button" icon="pi pi-file-excel" label="Download Excel Report" className="bg-teal-400 text-gray-100 p-3" onClick={exportCSV} />
                 </CSVLink>
                 )}
             </div>

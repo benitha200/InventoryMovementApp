@@ -29,7 +29,7 @@ export default function StockInHistory() {
                         wrn: item.wrn,
                         bags: item.bags,
                         quantity_kgs: item.quantity_kgs,
-                        created_at: item.created_at
+                        delivered_date: item.delivered_date
                     };
                 });
                 setStockInData(formattedData);
@@ -72,7 +72,7 @@ export default function StockInHistory() {
                 header={header}
             >
                 <Column field="warehouse" header="Warehouse" filter filterPlaceholder="Search by Warehouse" />
-                <Column field="section" header="Section" filter filterPlaceholder="Search by Section" />
+                {/* <Column field="section" header="Section" filter filterPlaceholder="Search by Section" /> */}
                 <Column field="cell" header="Cell" filter filterPlaceholder="Search by Cell" />
                 <Column field="coffetype" header="Coffee Type" filter filterPlaceholder="Search by Coffee Type" />
                 <Column field="processtype" header="Process Type" filter filterPlaceholder="Search by Process Type" />
@@ -80,7 +80,7 @@ export default function StockInHistory() {
                 <Column field="wrn" header="WRN/GRN" filter filterPlaceholder="Search by WRN" />
                 <Column field="bags" header="Bags" filter filterPlaceholder="Search by Bags" />
                 <Column field="quantity_kgs" header="Quantity (kgs)" filter filterPlaceholder="Search by Quantity (kgs)" />
-                <Column field="created_at" header="Created At" filter filterPlaceholder="Search by Created At" />
+                <Column field="delivered_date" header="Date" filter filterPlaceholder="Search by Created At" />
             </DataTable>
         </div>
     );

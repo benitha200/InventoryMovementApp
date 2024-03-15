@@ -308,39 +308,39 @@ const contributionsFilter = (value, filter) => {
             
             <div className="table-with-margin">
             <DataTable
-    value={stockData}
-    paginator
-    showGridlines
-    rows={10}
-    dataKey="id"
-    globalFilter={globalFilterValue}
-    emptyMessage="No stock data found."
-    header={header}
->
-    <Column field="warehouse" header="Warehouse" filter filterPlaceholder="Search by Warehouse" />
-    {/* <Column field="section" header="Section" filter filterPlaceholder="Search by Section" /> */}
-    <Column field="cell" header="Cell" filter filterPlaceholder="Search by Cell" />
-    <Column field="coffetype" header="Coffee Type" filter filterPlaceholder="Search by Coffee Type" />
-    <Column field="processtypes" header="Process Type" filter filterPlaceholder="Search by Process Type" body={renderProcessTypes} />
-    {/* <Column field="contributions" header="Contributions" filter filterPlaceholder="Search by Contributions" body={renderContributions} /> */}
-    <Column
-        field="contributions"
-        header="Contributions"
-        filter
-        filterPlaceholder="Search by Contributions"
-        filterMatchMode="custom"
-        filterFunction={contributionsFilter}
-        body={renderContributions}
-    />
-    <Column field="bags" header="Bags" filter filterPlaceholder="Search by Bags" />
-    <Column field="quantity_kgs" header="Quantity (kgs)" filter filterPlaceholder="Search by Quantity (kgs)" />
-    <Column field="created_at" header="Date" filter filterPlaceholder="Search by Created At" />
-    <Column
-    header="Actions"
-    body={renderActions}
-    style={{ minWidth: '7rem' }}  // Adjust the value according to your preference
-/>
-</DataTable>
+              value={stockData}
+              paginator
+              showGridlines
+              rows={10}
+              dataKey="id"
+              globalFilter={globalFilterValue}
+              emptyMessage="No stock data found."
+              header={header}
+          >
+              <Column field="warehouse" header="Warehouse" filter filterPlaceholder="Search by Warehouse" />
+              {/* <Column field="section" header="Section" filter filterPlaceholder="Search by Section" /> */}
+              <Column field="cell" header="Cell" filter filterPlaceholder="Search by Cell" />
+              <Column field="coffetype" header="Coffee Type" filter filterPlaceholder="Search by Coffee Type" />
+              <Column field="processtypes" header="Process Type" filter filterPlaceholder="Search by Process Type" body={renderProcessTypes} />
+              {/* <Column field="contributions" header="Contributions" filter filterPlaceholder="Search by Contributions" body={renderContributions} /> */}
+              <Column
+                  field="contributions"
+                  header="Contributions"
+                  filter
+                  filterPlaceholder="Search by Contributions"
+                  filterMatchMode="custom"
+                  filterFunction={contributionsFilter}
+                  body={renderContributions}
+              />
+              <Column field="bags" header="Bags" filter filterPlaceholder="Search by Bags" />
+              <Column field="quantity_kgs" header="Quantity (kgs)" filter filterPlaceholder="Search by Quantity (kgs)" />
+              <Column field="created_at" header="Date" filter filterPlaceholder="Search by Created At" />
+              <Column
+              header="Actions"
+              body={renderActions}
+              style={{ minWidth: '7rem' }}  // Adjust the value according to your preference
+          />
+          </DataTable>
         </div>
         </div>
         

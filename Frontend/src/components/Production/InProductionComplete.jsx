@@ -258,10 +258,10 @@ const InProductionComplete = () => {
             </div>
             </div>
             
-            {production_process === 'processing' && (
+            {production_process === 'Processing' && (
                <div className='gap-2 m-2 p-2'>
                 
-                <div className="card bg-gray-200">
+                <div className="card bg-gray-100">
                 <span className='text-xl m-2 font-bold pb-5'>INPUT WRNs</span>
                     <DataTable value={batchdetails} tableStyle={{ minWidth: '50rem' }}>
                         {/* <Column field="warehouse" header="Warehouse"></Column> */}
@@ -278,7 +278,7 @@ const InProductionComplete = () => {
                     </div>
                 </div>
 
-                <div className="card bg-gray-200 mt-2">
+                <div className="card bg-gray-100 mt-3">
                 {/* <div className='flex flex-row justify-between'> */}
                     <span className='text-xl m-2 font-bold pb-5'>OUTPUT</span>
 
@@ -302,7 +302,7 @@ const InProductionComplete = () => {
                                         optionLabel="name"
                                         placeholder="Select Cell"
                                         filter
-                                        className="w-full md:w-14rem h-12  border-2 border-gray-200"
+                                        className="w-80 md:w-14rem h-12  border-2 border-gray-200"
                                     />
                                     </div>
                                     <div className='flex flex-col'>
@@ -313,7 +313,7 @@ const InProductionComplete = () => {
                                         value={quantitykgs}
                                         onChange={(e) => setQuantityKgs(e.target.value)}
                                         placeholder='Quantity'
-                                        className="w-full h-12 mt- bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+                                        className="w-70 h-12 mt- bg-gray-200 appearance-none border-2 border-gray-00 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
                                     />
                                     </div>
                                     <div className='flex flex-col flex-wrap'>
@@ -324,13 +324,13 @@ const InProductionComplete = () => {
                                         options={qualities}
                                         optionLabel="name"
                                         placeholder="Select a Grade"
-                                        className="w-full md:w-14rem h-12  bg-gray-200 appearance-none border-2 border-gray-200 rounded text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+                                        className="w-80 md:w-14rem h-12  bg-gray-200 appearance-none border-2 border-gray-200 rounded text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
                                     />
                                     </div>
 
                                     <button
                                         type="submit"
-                                        className="mx-auto p-2 shadow w-2/4 bg-cyan-500 hover:bg-cyan-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
+                                        className="mx-auto p-2 shadow w-40 mt-10 md:w-14rem h-12 bg-cyan-500 hover:bg-cyan-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
                                     >
                                         Submit
                                     </button>
@@ -357,7 +357,7 @@ const InProductionComplete = () => {
             {production_process === 'bagging off' && (
                <div className='gap-2 m-2 p-2'>
                 
-                <div className="card bg-gray-200">
+                <div className="card bg-gray-100">
                 <span className='text-xl m-2 font-bold pb-5'>INPUT BATCH</span>
                     <DataTable value={batchdetails} tableStyle={{ minWidth: '50rem' }}>
                         {/* <Column field="warehouse" header="Warehouse"></Column> */}
@@ -376,7 +376,7 @@ const InProductionComplete = () => {
                     </div>
                 </div>
 
-                <div className="card bg-gray-200 mt-2">
+                <div className="card bg-gray-100 mt-3">
                 {/* <div className='flex flex-row justify-between'> */}
                     <span className='text-xl m-2 font-bold pb-5'>OUTPUT</span>
 
