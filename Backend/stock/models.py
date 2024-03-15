@@ -70,7 +70,7 @@ class Cell(models.Model):
 
 class StockIn(models.Model):
     warehouse=models.ForeignKey(Warehouse,on_delete=models.CASCADE)
-    section=models.ForeignKey(Section,on_delete=models.CASCADE)
+    section=models.ForeignKey(Section,on_delete=models.CASCADE, blank=True,null=True )
     cell=models.ForeignKey(Cell,on_delete=models.CASCADE)
     coffetype=models.ForeignKey(CoffeeType,on_delete=models.CASCADE)
     processtype=models.ForeignKey(ProcessType,on_delete=models.CASCADE)
@@ -81,6 +81,7 @@ class StockIn(models.Model):
     quantity_kgs=models.IntegerField()
     created_at = models.DateField(auto_now_add=True)
     moisture_content=models.IntegerField()
+    delivered_date=models.DateField()
 
     class Meta:
         db_table="stock_in"

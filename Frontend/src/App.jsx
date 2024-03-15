@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Link, useLocation } from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import StockInPage from "./components/StockInPage";
 import StockOutPage from "./components/StockOutPage";
 import SectionForm from "./components/SectionForm";
@@ -14,7 +14,7 @@ import './App.css'
 // Import PrimeReact components
 import { Menu } from 'primereact/menu';
 import { Badge } from 'primereact/badge';
-import { Avatar } from 'primereact/avatar';
+import ProductionRequestForm from "./components/Production/ProductionRequestForm"; // Import ProductionRequestForm component
 import StockData from "./components/Stock/StockData";
 import ProductionMovement from "./components/Stock/ProductionMovement";
 import InProduction from "./components/Production/InProduction";
@@ -24,6 +24,7 @@ import InProductionDetails from "./components/Production/InProductionDetails";
 import CreateBatchForm from "./components/Production/CreateBatchForm";
 import InProductionComplete from "./components/Production/InProductionComplete";
 import ExportData from "./components/Export/ExportData";
+import Reports from "./components/Reports/Reports";
 
 const itemRenderer = (item) => (
   <div className='p-menuitem-content bg-cyan-700 text-slate-100'>
@@ -79,6 +80,11 @@ const App = () => {
           to: '/production-logs'
         },
         {
+          label: 'Production Request',
+          template: itemRenderer,
+          to: '/ProductionRequestForm'
+        },
+        {
           label: 'Track Batch',
           template: itemRenderer,
           to: '/in-production'
@@ -88,13 +94,16 @@ const App = () => {
           template: itemRenderer,
           to: '/export-data'
         },
-        
         {
           label: 'Current Stock',
           template: itemRenderer,
           to: '/stock'
         },
-        
+        {
+          label: 'Reports',
+          template: itemRenderer,
+          to: '/report'
+        },
       ]
     },
     {
@@ -131,7 +140,7 @@ const App = () => {
     <Router>
       <div className="flex flex-col md:flex-row h-screen">
         {/* Sidebar */}
-        <div className="bg-cyan-700 w-50 px-4 py-6 text-cyan-50">
+        <div className="bg-cyan-700 w-50 px-4 py-6 text-cyan-50 overflow-auto">
           <Menu model={items} className="w-full h-full bg-cyan-700 w-50 px-4 py-6 text-cyan-50" />
         </div>
 
@@ -142,7 +151,7 @@ const App = () => {
             <Route exact path="/" element={<SectionForm />} />
             <Route path="/stockInput" element={<StockInPage />} />
             <Route path="/stockOut" element={<StockOutPage />} />
-            <Route path="/create-batch" element={<CreateBatchForm/>}/>
+            <Route path="/create-batch" element={<CreateBatchForm />} />
             <Route path="/stock" element={<Stock />} />
             <Route path="/stockdata" element={<StockData />} />
             <Route path="/sectionForm" element={<SectionForm />} />
@@ -151,13 +160,15 @@ const App = () => {
             <Route path="/supplier" element={<Supplier />} />
             <Route path="/currentStock" element={<CurrentStock />} />
             <Route path="/cell" element={<Cell />} />
-            <Route path="/production-movement-form" element={<ProductionMovement/>}/>
-            <Route path="/in-production" element={<InProduction/>}/>
-            <Route path="/in-production-details" element={<InProductionDetails/>}/>
-            <Route path="/in-production-complete" element={<InProductionComplete/>}/>
-            <Route path="/in-production-movement-form" element={<InProductionMovementForm/>}/>
-            <Route path="/production-logs" element={<ProductionLogs/>}/>
-            <Route path="/export-data" element={<ExportData/>}/>
+            <Route path="/production-movement-form" element={<ProductionMovement />} />
+            <Route path="/in-production" element={<InProduction />} />
+            <Route path="/in-production-details" element={<InProductionDetails />} />
+            <Route path="/in-production-complete" element={<InProductionComplete />} />
+            <Route path="/in-production-movement-form" element={<InProductionMovementForm />} />
+            <Route path="/production-logs" element={<ProductionLogs />} />
+            <Route path="/export-data" element={<ExportData />} />
+            <Route path="/report" element={<Reports/>}/>
+            <Route path="/ProductionRequestForm" element={<ProductionRequestForm />} />
           </Routes>
         </div>
       </div>

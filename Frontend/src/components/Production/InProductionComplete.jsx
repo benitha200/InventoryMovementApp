@@ -142,7 +142,7 @@ const InProductionComplete = () => {
                 headers: myHeaders,
                 body: JSON.stringify({
                     batch_no: batch_no,
-                    completion_date: completiondate.toISOString().split('T')[0], // Extract YYYY-MM-DD
+                    completion_date: completiondate.toISOString().split('T')[0], 
                 }),
                 redirect: "follow",
             });

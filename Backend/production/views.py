@@ -542,7 +542,8 @@ class ProductionDataDetailsAPIView(APIView):
             return Response({"detail": "Batch numbers are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         production_data = ProductionData.objects.filter(batch_no__in=batch_nos)
-        serializer = ProductionDataSerializer(production_data, many=True)  # Replace with your serializer
+    
+        serializer = ProductionDataSerializer(production_data, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     

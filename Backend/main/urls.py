@@ -20,6 +20,7 @@ from stock.views import *
 from supplier.views import *
 from production.views import *
 from coffee.views import CoffeTypeListView,ProcessTypeAPIView
+from report.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,7 +35,8 @@ urlpatterns = [
 
     path('cell/create/', CellCreateView.as_view(), name="cell-create"),
     path('cell/', CellListView.as_view(), name="cell"),
-    path('cell/<int:section>/', CellAPIView.as_view(), name='cell'),
+    path('cell/<int:warehouse>/', CellListViewPerWarehouse.as_view(), name="cell"),
+    # path('cell/<int:section>/', CellAPIView.as_view(), name='cell'),
     
 
     path('supplier/create/', SupplierCreateView.as_view(), name="supplier-create"),
@@ -73,6 +75,8 @@ urlpatterns = [
     path('changeprocess/',ProductionLogsCreateAPIView.as_view(),name='change-process'),
     path('max-batch-no/',MaxBatchNoAPIView.as_view(),name='max-batch-no'),
     path('cellsectionwarehouse/',CellWithWarehouseSectionAPIView.as_view(),name='cell-section-warehouse'),
+
+    path('generate-report/',GenerateReportAPIView.as_view(),name="generate-report"),
 
     
 ]
