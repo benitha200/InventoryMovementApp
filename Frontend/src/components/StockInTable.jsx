@@ -27,6 +27,7 @@ export default function StockInHistory() {
                         processtype: item.processtype,
                         supplier: item.supplier,
                         wrn: item.wrn,
+                        grn: item.grn,
                         bags: item.bags,
                         quantity_kgs: item.quantity_kgs,
                         delivered_date: item.delivered_date
@@ -77,7 +78,8 @@ export default function StockInHistory() {
                 <Column field="coffetype" header="Coffee Type" filter filterPlaceholder="Search by Coffee Type" />
                 <Column field="processtype" header="Process Type" filter filterPlaceholder="Search by Process Type" />
                 <Column field="supplier" header="Supplier" filter filterPlaceholder="Search by Supplier" />
-                <Column field="wrn" header="WRN/GRN" filter filterPlaceholder="Search by WRN" />
+                <Column field="wrn" header="WRN" filter filterPlaceholder="Search by WRN" />
+                <Column field="grn" header="GRN" filter filterPlaceholder="Search by WRN" />
                 <Column field="bags" header="Bags" filter filterPlaceholder="Search by Bags" />
                 <Column field="quantity_kgs" header="Quantity (kgs)" filter filterPlaceholder="Search by Quantity (kgs)" />
                 <Column field="delivered_date" header="Date" filter filterPlaceholder="Search by Created At" />

@@ -17,7 +17,9 @@ const StockInForm = () => {
     const [selectedCoffeetype,setelectedCoffeetype]=useState()
     const [processtypes,setProcesstypes]=useState()
     const [selectedProcesstype,setSelectedProcesstype]=useState()
-    const [startDate,setStartDate]=useState()
+    const [startDate,setStartDate]=useState() 
+    const [cstatus,setCStatus]=useState() 
+    
     
     const [bags,setBags]=useState()
     const [bagsNo,setBagsNo]=useState()
@@ -184,7 +186,8 @@ const StockInForm = () => {
         "bags": bagsNo,
         "quantity_kgs": quantity,
         "delivered_date":startDate.toISOString().split('T')[0],
-        "moisture_content":parseInt(moisturecontent)
+        "moisture_content":parseInt(moisturecontent),
+        "cstatus":cstatus
         });
 
         const requestOptions = {
@@ -365,7 +368,28 @@ const StockInForm = () => {
                             showIcon
                             className="w-full md:w-14rem h-10 border-2 border-s-slate-200 rounded"
                             />
-              
+                        </div>
+                    {selectedCoffeetype==2 &&(
+                        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="certificationStatus">
+                                Certification Status
+                            </label>
+                            <select
+                                value={cstatus}
+                                onChange={(e) => setCStatus(e.target.value)}
+                                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                id="certificationStatus"
+                                required
+                            >
+                                <option value="">Select Certification Status</option>
+                                <option value="C">Certified</option>
+                                <option value="NC">Non Certified</option>
+                            </select>
+                        </div>
+                    )}
+                        
+
+                        
                         {/* <input
                         value={bags}
                         // onChange={handleBagsChange}
@@ -376,7 +400,7 @@ const StockInForm = () => {
                         placeholder="Number of Bags"
                         required
                         /> */}
-                    </div>
+                    {/* </div> */}
                     
                     </div>
                     <div className="flex flex-wrap -mx-3 mb-6">
