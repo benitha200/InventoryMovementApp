@@ -18,22 +18,31 @@ const Reports = () => {
       setExportData(report);
   };
 
-  const csvHeaders = [
-    { label: 'Date', key: 'delivered_date' },
-    { label: 'Warehouse', key: 'warehouse' },
-    { label: 'Cell', key: 'cell' },
-    { label: 'Coffee Type', key: 'coffetype' },
-    { label: 'Grade', key: 'processtype' },
-    { label: 'WRN', key: 'wrn' },
-    { label: 'Quantity', key: 'quantity_kgs' },
-    { label: 'Bags', key: 'bags' },
-    { label: 'Supplier', key: 'supplier' },
-    { label: 'Moisture Content', key: 'moisture_content' },
-
-
-    
-    
+  // const csvHeaders = [
+  //   { label: 'Date', key: 'delivered_date' },
+  //   { label: 'Warehouse', key: 'warehouse' },
+  //   { label: 'Cell', key: 'cell' },
+  //   { label: 'Coffee Type', key: 'coffetype' },
+  //   { label: 'Grade', key: 'processtype' },
+  //   { label: 'WRN', key: 'wrn' },
+  //   { label: 'Quantity', key: 'quantity_kgs' },
+  //   { label: 'Bags', key: 'bags' },
+  //   { label: 'Supplier', key: 'supplier' },
+  //   { label: 'Moisture Content', key: 'moisture_content' },
+  // ];
+    const csvHeaders = [
+      { label: 'Date', key: 'delivered_date', style: { fontWeight: 'bold' } },
+      { label: 'Warehouse', key: 'warehouse', style: { fontWeight: 'bold' } },
+      { label: 'Cell', key: 'cell', style: { fontWeight: 'bold' } },
+      { label: 'Coffee Type', key: 'coffetype', style: { fontWeight: 'bold' } },
+      { label: 'Grade', key: 'processtype', style: { fontWeight: 'bold' } },
+      { label: 'WRN/GRN', key: 'wrn', style: { fontWeight: 'bold' } },
+      { label: 'Quantity', key: 'quantity_kgs', style: { fontWeight: 'bold' } },
+      { label: 'Bags', key: 'bags', style: { fontWeight: 'bold' } },
+      { label: 'Supplier', key: 'supplier', style: { fontWeight: 'bold' } },
+      { label: 'Moisture Content', key: 'moisture_content', style: { fontWeight: 'bold' } },
   ];
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
