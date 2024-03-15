@@ -25,6 +25,7 @@ import CreateBatchForm from "./components/Production/CreateBatchForm";
 import InProductionComplete from "./components/Production/InProductionComplete";
 import ExportData from "./components/Export/ExportData";
 import Reports from "./components/Reports/Reports";
+import CreateLotForm from "./components/Production/CreateLotForm";
 
 const itemRenderer = (item) => (
   <div className='p-menuitem-content bg-cyan-700 text-slate-100'>
@@ -63,6 +64,11 @@ const App = () => {
           label: 'Create Batch',
           template: itemRenderer,
           to: '/create-batch'
+        },
+        {
+          label: 'Create Lot',
+          template: itemRenderer,
+          to: '/create-lot'
         },
         {
           label: 'Stock Movement',
@@ -150,8 +156,9 @@ const App = () => {
             {/* Your existing routes */}
             <Route exact path="/" element={<SectionForm />} />
             <Route path="/stockInput" element={<StockInPage />} />
-            <Route path="/stockOut" element={<StockOutPage />} />
+            <Route path="/stockOut" element={<StockOutPage />} /> 
             <Route path="/create-batch" element={<CreateBatchForm />} />
+            <Route path="/create-lot" element={<CreateLotForm />} />
             <Route path="/stock" element={<Stock />} />
             <Route path="/stockdata" element={<StockData />} />
             <Route path="/sectionForm" element={<SectionForm />} />

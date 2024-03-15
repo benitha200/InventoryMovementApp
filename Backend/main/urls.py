@@ -71,6 +71,9 @@ urlpatterns = [
     path('batches/create/',BatchCreateAPIView.as_view(),name="create-batch"),
     path('batches/',BatchListAPIView.as_view(),name="get-batches"),
 
+    path('lot/create/',LotCreateAPIView.as_view(),name="create-lot"),
+    path('lots/',LotsListAPIView.as_view(),name="get-lots"),
+
 
     path('changeprocess/',ProductionLogsCreateAPIView.as_view(),name='change-process'),
     path('max-batch-no/',MaxBatchNoAPIView.as_view(),name='max-batch-no'),

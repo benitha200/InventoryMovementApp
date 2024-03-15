@@ -94,12 +94,12 @@ export default function StockData() {
         .then((response) => response.json())
         .then((result) => {
             const groupedData = result.reduce((acc, item) => {
-                const key = `${item.warehouse.name}-${item.section.name}-${item.cell.cell_label}`;
+                const key = `${item.warehouse.name}-${item.cell.cell_label}`;
                 if (!acc[key]) {
                     acc[key] = {
                         id: item.id,
                         warehouse: item.warehouse.name,
-                        section: item.section.name,
+                        // section: item.section.name,
                         cell: item.cell.cell_label,
                         coffetype: item.coffetype.name,
                         processtypes: [item.processtype.type_name],

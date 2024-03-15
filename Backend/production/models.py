@@ -133,3 +133,11 @@ class Batch(models.Model):
 
     class Meta:
         db_table="batches"
+
+class Lots(models.Model):
+    lot_no=models.CharField(max_length=200)
+    quality=models.CharField(max_length=200)
+    created_at = models.DateField(auto_now_add=True)
+
+    class Meta:
+        db_table="lots"

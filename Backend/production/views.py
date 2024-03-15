@@ -555,3 +555,11 @@ class BatchCreateAPIView(generics.CreateAPIView):
 class BatchListAPIView(generics.ListAPIView):
     queryset=Batch.objects.all()
     serializer_class=BatchSerializer
+
+class LotCreateAPIView(generics.CreateAPIView):
+    queryset=Lots.objects.all()
+    serializer_class=LotsSerializer
+
+class LotsListAPIView(generics.ListAPIView):
+    queryset=Lots.objects.all()
+    serializer_class=LotsSerializer

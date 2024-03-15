@@ -23,6 +23,11 @@ class BatchSerializer(serializers.ModelSerializer):
     class Meta:
         model=Batch
         fields='__all__'
+
+class LotsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Lots
+        fields='__all__'
         
 class ProductionLogsSerializer(serializers.ModelSerializer):
     class Meta:
