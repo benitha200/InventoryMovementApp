@@ -19,15 +19,15 @@ const Reports = () => {
   };
 
   const csvHeaders = [
+    { label: 'Date', key: 'delivered_date' },
     { label: 'Warehouse', key: 'warehouse' },
     { label: 'Cell', key: 'cell' },
-    { label: 'Coffee Type', key: 'coffee_type' },
+    { label: 'Coffee Type', key: 'coffetype' },
     { label: 'Grade', key: 'processtype' },
     { label: 'WRN', key: 'wrn' },
     { label: 'Quantity', key: 'quantity_kgs' },
     { label: 'Bags', key: 'bags' },
     { label: 'Supplier', key: 'supplier' },
-    { label: 'Process Type', key: 'process_type' },
     { label: 'Moisture Content', key: 'moisture_content' },
 
 

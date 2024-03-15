@@ -182,6 +182,7 @@ const StockInForm = () => {
         "wrn": wrn,
         "bags": bags,
         "quantity_kgs": quantity,
+        "delivered_date":startDate.toISOString().split('T')[0],
         "moisture_content":parseInt(moisturecontent)
         });
 

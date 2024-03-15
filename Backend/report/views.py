@@ -28,8 +28,8 @@ class GenerateReportAPIView(APIView):
             #     Q(created_at=end_date)
             # ).order_by("-id")
             queryset = StockIn.objects.filter(
-                created_at__gte=start_date,
-                created_at__lte=end_date
+                delivered_date__gte=start_date,
+                delivered_date__lte=end_date
             ).order_by("-id")
 
 

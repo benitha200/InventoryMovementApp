@@ -59,7 +59,7 @@ class StockListSerializer(serializers.Serializer):
 
 class StockInListSerializer(serializers.ModelSerializer):
     warehouse = serializers.SerializerMethodField()
-    section = serializers.SerializerMethodField()
+    # section = serializers.SerializerMethodField()
     cell = serializers.SerializerMethodField()
     coffetype = serializers.SerializerMethodField()
     processtype = serializers.SerializerMethodField()
@@ -72,8 +72,8 @@ class StockInListSerializer(serializers.ModelSerializer):
     def get_warehouse(self, obj):
         return obj.warehouse.name
 
-    def get_section(self, obj):
-        return obj.section.name
+    # def get_section(self, obj):
+    #     return obj.section.name
 
     def get_cell(self, obj):
         return obj.cell.cell_label

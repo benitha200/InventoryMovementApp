@@ -99,6 +99,11 @@ const App = () => {
           template: itemRenderer,
           to: '/stock'
         },
+        {
+          label: 'Reports',
+          template: itemRenderer,
+          to: '/report'
+        },
       ]
     },
     {
@@ -162,7 +167,7 @@ const App = () => {
             <Route path="/in-production-movement-form" element={<InProductionMovementForm />} />
             <Route path="/production-logs" element={<ProductionLogs />} />
             <Route path="/export-data" element={<ExportData />} />
-            {/* Include ProductionRequestForm */}
+            <Route path="/report" element={<Reports/>}/>
             <Route path="/ProductionRequestForm" element={<ProductionRequestForm />} />
           </Routes>
         </div>

@@ -84,7 +84,7 @@ class StockInCreateView(generics.CreateAPIView):
         stock_data = {
             'stock_in': stock_in_instance.id,
             'warehouse': stock_in_instance.warehouse.id,
-            'section': stock_in_instance.section.id,
+            # 'section': stock_in_instance.section.id,
             'cell': stock_in_instance.cell.id,
             'coffetype': stock_in_instance.coffetype.id,
             'processtype': stock_in_instance.processtype.id,
