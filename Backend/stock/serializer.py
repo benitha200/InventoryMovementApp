@@ -39,7 +39,7 @@ class SupplierSerializer(serializers.ModelSerializer):
 class StockInSerializer(serializers.ModelSerializer):
     class Meta:
         model=StockIn
-        fields = ['warehouse', 'section', 'cell', 'coffetype', 'processtype', 'supplier', 'bags', 'quantity_kgs','moisture_content','delivered_date']
+        fields = ['warehouse', 'section', 'cell', 'coffetype', 'processtype', 'supplier', 'bags', 'quantity_kgs','moisture_content','delivered_date','cstatus','grn']
         
 class StockSerializer(serializers.ModelSerializer):
     class Meta:
@@ -99,7 +99,7 @@ class StockDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stock
-        fields = ['id', 'stock_in', 'warehouse', 'section', 'cell', 'coffetype', 'processtype', 'wrn', 'supplier_name','quantity_kgs', 'bags_no', 'created_at', 'moved_to']
+        fields = ['id', 'stock_in', 'warehouse', 'section', 'cell', 'coffetype', 'processtype', 'wrn', 'supplier_name','quantity_kgs', 'bags_no', 'created_at', 'moved_to','cstatus','grn']
     
 
     def get_supplier_name(self, obj):

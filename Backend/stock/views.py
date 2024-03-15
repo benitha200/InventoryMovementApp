@@ -80,7 +80,6 @@ class StockInCreateView(generics.CreateAPIView):
         # Print to debug and check values
         print(f"StockIn instance created: {stock_in_instance}")
 
-        # Extract relevant data from the StockIn instance and create Stock instance
         stock_data = {
             'stock_in': stock_in_instance.id,
             'warehouse': stock_in_instance.warehouse.id,
@@ -89,6 +88,7 @@ class StockInCreateView(generics.CreateAPIView):
             'coffetype': stock_in_instance.coffetype.id,
             'processtype': stock_in_instance.processtype.id,
             'wrn': stock_in_instance.wrn,
+            'grn':stock_in_instance.grn,
             'quantity_kgs': stock_in_instance.quantity_kgs,
             'bags_no': stock_in_instance.bags,
             'moved_to': 0,
