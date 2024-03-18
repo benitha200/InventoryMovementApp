@@ -151,6 +151,5 @@ class CellWithWarehouseSectionAPIView(generics.ListAPIView):
     serializer_class = CellSerializer
 
     def get_queryset(self):
-        # Fetch all cells with related sections and warehouses
         queryset = Cell.objects.select_related('section__warehouse').all()
         return queryset
