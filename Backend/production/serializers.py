@@ -63,3 +63,7 @@ class ProductionLogsSerializer(serializers.ModelSerializer):
         model = ProductionLogs
         fields = '__all__'
 
+class ProductionRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        models = ProductionRequest
+        fields = '__all__'

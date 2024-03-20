@@ -6,38 +6,38 @@ from .models import *
 from stock.models import *
 from .serializers import *
 from rest_framework import generics
-from django.db.models import Sum,Max
+from django.db.models import Sum, Max
 from django.core.exceptions import ObjectDoesNotExist
 
 
 # Create your views here.
 # class ProductionInCreateAPIView(APIView):
-    # def post(self, request, *args, **kwargs):
-    #     selected_wrns = request.data.get('selected_wrns', [])
-    #     quantity_inputs = request.data.get('quantity_inputs', [])
+# def post(self, request, *args, **kwargs):
+#     selected_wrns = request.data.get('selected_wrns', [])
+#     quantity_inputs = request.data.get('quantity_inputs', [])
 
-    #     if len(selected_wrns) != len(quantity_inputs):
-    #         return Response({"error": "Number of selected WRNs and quantity inputs do not match."}, status=status.HTTP_400_BAD_REQUEST)
+#     if len(selected_wrns) != len(quantity_inputs):
+#         return Response({"error": "Number of selected WRNs and quantity inputs do not match."}, status=status.HTTP_400_BAD_REQUEST)
 
-    #     for wrn, quantity in zip(selected_wrns, quantity_inputs):
-    #         production_data = {
-    #             'stock': wrn['value'],  # Assuming 'value' in wrn corresponds to stock id
-    #             'warehouse': wrn['warehouse_id'],
-    #             'section': wrn['section_id'],
-    #             'cell': wrn['cell_id'],
-    #             'stock_quantity': wrn['stock_quantity'],
-    #             'production_quantity': quantity,
-    #             'bags': wrn['bags'],
-    #             'processtype': wrn['processtype_id'],
-    #         }
-    #         serializer = ProductionInSerializer(data=production_data)
-    #         if serializer.is_valid():
-    #             serializer.save()
-    #         else:
-    #             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     for wrn, quantity in zip(selected_wrns, quantity_inputs):
+#         production_data = {
+#             'stock': wrn['value'],  # Assuming 'value' in wrn corresponds to stock id
+#             'warehouse': wrn['warehouse_id'],
+#             'section': wrn['section_id'],
+#             'cell': wrn['cell_id'],
+#             'stock_quantity': wrn['stock_quantity'],
+#             'production_quantity': quantity,
+#             'bags': wrn['bags'],
+#             'processtype': wrn['processtype_id'],
+#         }
+#         serializer = ProductionInSerializer(data=production_data)
+#         if serializer.is_valid():
+#             serializer.save()
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    #     return Response({"message": "Production data successfully created."}, status=status.HTTP_201_CREATED)
-    
+#     return Response({"message": "Production data successfully created."}, status=status.HTTP_201_CREATED)
+
 # class ProductionInCreateAPIView(APIView):
 #     def post(self, request, *args, **kwargs):
 #         print(request.data)
@@ -47,9 +47,9 @@ from django.core.exceptions import ObjectDoesNotExist
 #             # Retrieve the corresponding Stock instance based on WRN
 #             stock_instance = Stock.objects.get(wrn=request.data['wrn'])
 #             print(stock_instance)
-            
+
 #             production_process=ProductionProcess.objects.get(id=request.data['production_process'])
-            
+
 #             production_data = {
 #                 'stock': stock_instance,
 #                 'warehouse': stock_instance.warehouse,
@@ -57,7 +57,7 @@ from django.core.exceptions import ObjectDoesNotExist
 #                 'cell': stock_instance.cell,
 #                 'coffetype_id': stock_instance.stock_in.coffetype.id,
 #                 'stock_quantity': stock_instance.quantity_kgs,
-#                 'net_quantity': net_quantity,  
+#                 'net_quantity': net_quantity,
 #                 'bags':bags,
 #                 'processtype': stock_instance.processtype,
 #                 'production_process':production_process
@@ -98,7 +98,7 @@ from django.core.exceptions import ObjectDoesNotExist
 #             return Response({"error": "Stock not found for the provided WRN"}, status=status.HTTP_404_NOT_FOUND)
 #         except Exception as e:
 #             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
 
 class ProductionInCreateAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -106,12 +106,13 @@ class ProductionInCreateAPIView(APIView):
             print(request.data)
             net_quantity = int(request.data['quantity'])
             bags = (net_quantity + 59) // 60
-            
+
             # Retrieve the corresponding Stock instance based on WRN
             stock_instance = Stock.objects.get(wrn=request.data['wrn'])
             print(stock_instance)
 
-            production_process = ProductionProcess.objects.get(id=request.data['production_process'])
+            production_process = ProductionProcess.objects.get(
+                id=request.data['production_process'])
 
             production_data = {
                 'stock': stock_instance,
@@ -120,25 +121,24 @@ class ProductionInCreateAPIView(APIView):
                 'cell': stock_instance.cell,
                 'coffetype_id': stock_instance.stock_in.coffetype.id,
                 'stock_quantity': stock_instance.quantity_kgs,
-                'net_quantity': net_quantity,  
+                'net_quantity': net_quantity,
                 'bags': bags,
                 'processtype': stock_instance.processtype,
                 'production_process': production_process,
-                'batch_no':request.data['batchno'],
-                'sub_batch':request.data['sub_batch'],
-                'wrn':request.data['wrn']
-            
+                'batch_no': request.data['batchno'],
+                'sub_batch': request.data['sub_batch'],
+                'wrn': request.data['wrn']
+
             }
             if stock_instance.quantity_kgs < int(request.data['quantity']):
-                            return Response({"error": f"Quantity of {stock_instance} is greater than expected"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": f"Quantity of {stock_instance} is greater than expected"}, status=status.HTTP_400_BAD_REQUEST)
             stock_instance.quantity_kgs -= int(request.data['quantity'])
             stock_instance.bags_no -= bags
 
-            
-
             stock_instance.save()
 
-            production_instance = ProductionData.objects.create(**production_data)
+            production_instance = ProductionData.objects.create(
+                **production_data)
 
             # Get the batch_no after saving
             request.data['batchno']
@@ -150,7 +150,7 @@ class ProductionInCreateAPIView(APIView):
                 "batch_no": request.data['batchno'],
                 "data": serializer.data,
             }
-            
+
             return Response(response_data, status=status.HTTP_201_CREATED)
 
         except Stock.DoesNotExist:
@@ -165,40 +165,44 @@ class ProductionOutCreateAPIView(APIView):
             print(request.data)
             net_quantity = int(request.data['output_quantity'])
             bags = (net_quantity + 59) // 60
-            
+
             try:
-                batch_instance = ProductionData.objects.filter(batch_no=request.data['batch_no']).first()
+                batch_instance = ProductionData.objects.filter(
+                    batch_no=request.data['batch_no']).first()
             except ProductionData.DoesNotExist:
                 batch_instance = None
 
-            production_process = ProductionProcess.objects.get(id=request.data['production_process'])
+            production_process = ProductionProcess.objects.get(
+                id=request.data['production_process'])
 
             production_data = {
-                 'warehouse':request.data['warehouse'],
-                 'output_quantity':request.data['output_quantity'],
-                 'output_quality':request.data['output_quality'],
-                 'output_bags':bags,
-                 'coffetype_id':batch_instance.coffetype_id,
-                 'processtype':batch_instance.processtype,
-                 'batch_no':request.data['batch_no'],
-                 'production_process':production_process
-            
+                'warehouse': request.data['warehouse'],
+                'output_quantity': request.data['output_quantity'],
+                'output_quality': request.data['output_quality'],
+                'output_bags': bags,
+                'coffetype_id': batch_instance.coffetype_id,
+                'processtype': batch_instance.processtype,
+                'batch_no': request.data['batch_no'],
+                'production_process': production_process
+
             }
 
-            production_instance = ProductionOutput.objects.create(**production_data)
+            production_instance = ProductionOutput.objects.create(
+                **production_data)
             serializer = ProductionOutputSerializer(production_instance)
             response_data = {
                 "message": "Successfully added new Item.",
                 "data": serializer.data,
             }
-            
+
             return Response(response_data, status=status.HTTP_201_CREATED)
 
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class ProductionOutputBatchDetails(generics.ListAPIView):
-    serializer_class=ProductionOutputSerializer
+    serializer_class = ProductionOutputSerializer
 
     def get(self, request, *args, **kwargs):
         batch_no = request.query_params.get('batch_no')
@@ -208,15 +212,17 @@ class ProductionOutputBatchDetails(generics.ListAPIView):
             return Response({"detail": "Batch numbers are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         production_output = ProductionOutput.objects.filter(batch_no=batch_no)
-        serializer = ProductionOutputSerializer(production_output, many=True) 
+        serializer = ProductionOutputSerializer(production_output, many=True)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)    
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class MaxBatchNoAPIView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             # Find the maximum batch_no from ProductionData
-            max_batch_no = ProductionData.objects.aggregate(Max('batch_no'))['batch_no__max']
+            max_batch_no = ProductionData.objects.aggregate(Max('batch_no'))[
+                'batch_no__max']
 
             if max_batch_no is not None:
                 return Response({"max_batch_no": max_batch_no}, status=status.HTTP_200_OK)
@@ -226,10 +232,10 @@ class MaxBatchNoAPIView(APIView):
                 return Response({"max_batch_no": default_batch_no}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
 
 class ProductionBatchDetails(generics.ListAPIView):
-    serializer_class=ProductionDataSerializer
+    serializer_class = ProductionDataSerializer
 
     def get(self, request, *args, **kwargs):
         batch_no = request.query_params.get('batch_no')
@@ -239,9 +245,10 @@ class ProductionBatchDetails(generics.ListAPIView):
             return Response({"detail": "Batch numbers are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         production_data = ProductionData.objects.filter(sub_batch=batch_no)
-        serializer = ProductionDataSerializer(production_data, many=True) 
+        serializer = ProductionDataSerializer(production_data, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class ProductionDataListView(generics.ListAPIView):
     serializer_class = ProductionDataGroupedSerializer
@@ -249,13 +256,15 @@ class ProductionDataListView(generics.ListAPIView):
     def get_queryset(self):
         queryset = (
             ProductionData.objects
-            .values('production_process', 'production_process__name', 'batch_no')  # Include batch_no in values
+            # Include batch_no in values
+            .values('production_process', 'production_process__name', 'batch_no')
             .annotate(
                 total_stock_quantity=Sum('stock_quantity'),
                 total_net_quantity=Sum('net_quantity'),
                 total_bags=Sum('bags'),
             )
-            .order_by('-batch_no')  # Order by production_process and batch_no if needed
+            # Order by production_process and batch_no if needed
+            .order_by('-batch_no')
         )
 
         # Optionally, you can exclude batches where all values are zero
@@ -267,27 +276,31 @@ class ProductionDataListView(generics.ListAPIView):
 
         return queryset
 
+
 class AllProductionDataListView(generics.ListAPIView):
-    queryset=ProductionData.objects.all()
-    serializer_class=ProductionDataSerializer
+    queryset = ProductionData.objects.all()
+    serializer_class = ProductionDataSerializer
+
 
 class ProductionDataByProcess(generics.ListAPIView):
-    serializer_class=ProductionDataSerializer
-    lookup_url_kwarg='processfrom'
+    serializer_class = ProductionDataSerializer
+    lookup_url_kwarg = 'processfrom'
 
     def get_queryset(self):
-        process_from=self.kwargs.get(self.lookup_url_kwarg)
-        queryset=ProductionData.objects.filter(production_process__id=process_from)
+        process_from = self.kwargs.get(self.lookup_url_kwarg)
+        queryset = ProductionData.objects.filter(
+            production_process__id=process_from)
         return queryset
 
+
 class ProductionProcessCreateAPIView(generics.CreateAPIView):
-    queryset=ProductionProcess.objects.all()
-    serializer_class=ProductionProcessSerializer
+    queryset = ProductionProcess.objects.all()
+    serializer_class = ProductionProcessSerializer
 
 
 class ProductionProcessListView(generics.ListAPIView):
-    queryset=ProductionProcess.objects.all()
-    serializer_class=ProductionProcessSerializer
+    queryset = ProductionProcess.objects.all()
+    serializer_class = ProductionProcessSerializer
 
 # class ProductionLogsCreateAPIView(APIView):
 #     def post(self, request, *args, **kwargs):
@@ -341,7 +354,7 @@ class ProductionProcessListView(generics.ListAPIView):
 #             return Response({"error": "Production Not found"}, status=status.HTTP_404_NOT_FOUND)
 #         except Exception as e:
 #             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
 # class ProductionLogsCreateAPIView(APIView):
 #     def post(self, request, *args, **kwargs):
 #         try:
@@ -397,7 +410,7 @@ class ProductionProcessListView(generics.ListAPIView):
 #             return Response({"error": "Production Not found"}, status=status.HTTP_404_NOT_FOUND)
 #         except Exception as e:
 #             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
 
 class ProductionLogsCreateAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -409,9 +422,12 @@ class ProductionLogsCreateAPIView(APIView):
             moved_quantity = int(request.data['moved_quantity'])
             bags = (moved_quantity + 59) // 60
 
-            production_instance = ProductionData.objects.get(batch_no=request.data['batch_no'],production_process=request.data['production_process_from'])
-            production_process_from = ProductionProcess.objects.get(id=request.data['production_process_from'])
-            production_process_to = ProductionProcess.objects.get(id=request.data['production_process_to'])
+            production_instance = ProductionData.objects.get(
+                batch_no=request.data['batch_no'], production_process=request.data['production_process_from'])
+            production_process_from = ProductionProcess.objects.get(
+                id=request.data['production_process_from'])
+            production_process_to = ProductionProcess.objects.get(
+                id=request.data['production_process_to'])
 
             if production_process_from == production_process_to:
                 return Response({"error": "you can't move from and to the same process"}, status=status.HTTP_406_NOT_ACCEPTABLE)
@@ -429,7 +445,7 @@ class ProductionLogsCreateAPIView(APIView):
                 warehouse=production_instance.warehouse,
                 section=production_instance.section,
                 cell=production_instance.cell,
-                coffetype_id= production_instance.coffetype_id,
+                coffetype_id=production_instance.coffetype_id,
                 stock_quantity=production_instance.net_quantity,
                 # coffetype_id=production_instance.coffetype_id,
                 net_quantity=moved_quantity,
@@ -469,12 +485,12 @@ class ProductionLogsCreateAPIView(APIView):
             return Response({"error": "Production Not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
 
 class ProductionLogsAPIView(generics.ListAPIView):
     queryset = ProductionLogs.objects.all()
     serializer_class = ProductionLogsSerializer
+
 
 class ProductionDataDetailsAPIView(APIView):
     def get(self, request, *args, **kwargs):
@@ -485,14 +501,27 @@ class ProductionDataDetailsAPIView(APIView):
             return Response({"detail": "Batch numbers are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         production_data = ProductionData.objects.filter(batch_no__in=batch_nos)
-        serializer = ProductionDataSerializer(production_data, many=True)  # Replace with your serializer
+        serializer = ProductionDataSerializer(
+            production_data, many=True)  # Replace with your serializer
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+
 class BatchCreateAPIView(generics.CreateAPIView):
-    queryset=Batch.objects.all()
-    serializer_class=BatchSerializer
+    queryset = Batch.objects.all()
+    serializer_class = BatchSerializer
+
 
 class BatchListAPIView(generics.ListAPIView):
-    queryset=Batch.objects.all()
-    serializer_class=BatchSerializer
+    queryset = Batch.objects.all()
+    serializer_class = BatchSerializer
+
+
+class ProductionRequestCreateAPIView(generics.CreateAPIView):
+    queryset = Lots.objects.all()
+    serializer_class = LotsSerializer
+
+
+class ProductionRequestListAPIView(generics.ListAPIView):
+    queryset = Lots.objects.all()
+    serializer_class = LotsSerializer

@@ -34,8 +34,7 @@ urlpatterns = [
 
     path('cell/create/', CellCreateView.as_view(), name="cell-create"),
     path('cell/', CellListView.as_view(), name="cell"),
-    path('cell/<int:section>/', CellAPIView.as_view(), name='cell'),
-    
+    path('cell/<int:section>/', CellAPIView.as_view(), name='cell'),   
 
     path('supplier/create/', SupplierCreateView.as_view(), name="supplier-create"),
     path('supplier/', SupplierListView.as_view(), name="supplier"),
@@ -70,5 +69,7 @@ urlpatterns = [
     path('max-batch-no/',MaxBatchNoAPIView.as_view(),name='max-batch-no'),
     path('cellsectionwarehouse/',CellWithWarehouseSectionAPIView.as_view(),name='cell-section-warehouse'),
 
+    path('production-request/create/', ProductionRequestCreateAPIView.as_view(), name='production-request-create'),
+    path('production-request/list/', ProductionRequestListAPIView.as_view(), name='production-request-list'),
     
 ]
