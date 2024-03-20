@@ -192,8 +192,8 @@ const handleInputChange = (index, name, value,selectedBatchNo) => {
                 emptyMessage="No stock data found."
                 header={header}
             >
-        <Column field="starting_date" header="Date"/>
-        <Column field="sub_batch" header="Batch No" />
+        <Column field="created_on" header="Date"/>
+        <Column field="sub_batch" header="Batch No" filter />
         <Column
             field="coffetype"
             header="Coffee Type"
@@ -203,10 +203,10 @@ const handleInputChange = (index, name, value,selectedBatchNo) => {
             />
 
         
-        <Column field="production_process_from" header="Process From"/>
-        <Column field="production_process_to" header="Process To"/>
+        {/* <Column field="production_process_from" header="Process From"/>
+        <Column field="production_process_to" header="Process To"/> */}
         <Column field="net_quantity" header="Total Quantity" />
-        <Column field="moved_quantity" header="Moved Quantity" />
+        {/* <Column field="moved_quantity" header="Moved Quantity" /> */}
         <Column field="status" header="Status" filter filterPlaceholder="" body={(rowData) => (rowData.status === 1 ? "Completed" : "Pending")}/>
         <Column
         header="Actions"

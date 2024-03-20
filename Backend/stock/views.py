@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.db.models import Sum
+from django.db.models import Sum,F
 from rest_framework import generics
 from .models import Warehouse
 from .serializer import *
@@ -43,7 +43,18 @@ class CellCreateView(generics.CreateAPIView):
 class CellListView(generics.ListAPIView):
       queryset= Cell.objects.all()
       serializer_class=CellSerializer
-    
+
+class CellListViewPerWarehouse(generics.ListAPIView):
+    serializer_class = CellSerializer
+    lookup_url_kwarg = 'warehouse'
+
+    def get_queryset(self):
+        warehouse_id = self.kwargs.get(self.lookup_url_kwarg)
+        warehouse_id_str = str(warehouse_id)  # Convert warehouse_id to a string
+        queryset = Cell.objects.filter(cell_label__startswith=warehouse_id_str)
+
+        return queryset
+
 class CellAPIView(generics.ListAPIView):
     serializer_class = SectionSerializer
     lookup_url_kwarg = 'section'
@@ -69,15 +80,15 @@ class StockInCreateView(generics.CreateAPIView):
         # Print to debug and check values
         print(f"StockIn instance created: {stock_in_instance}")
 
-        # Extract relevant data from the StockIn instance and create Stock instance
         stock_data = {
             'stock_in': stock_in_instance.id,
             'warehouse': stock_in_instance.warehouse.id,
-            'section': stock_in_instance.section.id,
+            # 'section': stock_in_instance.section.id,
             'cell': stock_in_instance.cell.id,
             'coffetype': stock_in_instance.coffetype.id,
             'processtype': stock_in_instance.processtype.id,
             'wrn': stock_in_instance.wrn,
+            'grn':stock_in_instance.grn,
             'quantity_kgs': stock_in_instance.quantity_kgs,
             'bags_no': stock_in_instance.bags,
             'moved_to': 0,
@@ -140,6 +151,5 @@ class CellWithWarehouseSectionAPIView(generics.ListAPIView):
     serializer_class = CellSerializer
 
     def get_queryset(self):
-        # Fetch all cells with related sections and warehouses
         queryset = Cell.objects.select_related('section__warehouse').all()
         return queryset

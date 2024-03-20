@@ -69,62 +69,118 @@ class Cell(models.Model):
     
 
 class StockIn(models.Model):
-    warehouse=models.ForeignKey(Warehouse,on_delete=models.CASCADE)
-    section=models.ForeignKey(Section,on_delete=models.CASCADE)
-    cell=models.ForeignKey(Cell,on_delete=models.CASCADE)
-    coffetype=models.ForeignKey(CoffeeType,on_delete=models.CASCADE)
-    processtype=models.ForeignKey(ProcessType,on_delete=models.CASCADE)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
+    section = models.ForeignKey(Section, on_delete=models.CASCADE, blank=True, null=True)
+    cell = models.ForeignKey(Cell, on_delete=models.CASCADE)
+    coffetype = models.ForeignKey(CoffeeType, on_delete=models.CASCADE)
+    processtype = models.ForeignKey(ProcessType, on_delete=models.CASCADE)
     # supplier=models.ForeignKey(Supplier,on_deslete=models.CASCADE)
-    supplier=models.IntegerField()
-    wrn=models.CharField(max_length=200)
-    bags=models.IntegerField()
-    quantity_kgs=models.IntegerField()
+    supplier = models.IntegerField()
+    wrn = models.CharField(max_length=200, default='')
+    grn = models.CharField(max_length=200, default='')
+    cstatus = models.CharField(max_length=200,null=True)
+    bags = models.IntegerField()
+    quantity_kgs = models.IntegerField()
     created_at = models.DateField(auto_now_add=True)
-    moisture_content=models.IntegerField()
+    moisture_content = models.IntegerField()
+    delivered_date = models.DateField()
 
     class Meta:
-        db_table="stock_in"
+        db_table = "stock_in"
 
     def save(self, *args, **kwargs):
         if not self.pk:
             latest_stock = StockIn.objects.order_by('-wrn').first()
+            latest_stock_bt = StockIn.objects.order_by('-grn').first()
 
-            if latest_stock:
-                current_batch_number = int(latest_stock.wrn)
-                self.wrn = str(current_batch_number + 1).zfill(4)
+            if latest_stock and self.coffetype.id == 2:
+                if latest_stock.wrn:
+                    try:
+                        wrn_prefix, wrn_number_part = latest_stock.wrn.split('-', 1)
+                        if wrn_number_part.isdigit():
+                            current_wrn_number = int(wrn_number_part)
+                        else:
+                            current_wrn_number = 0
+                    except (ValueError, IndexError):
+                        current_wrn_number = 0
+                    self.wrn = f"WRN-{str(current_wrn_number + 1).zfill(4)}-{self.cstatus}"
+                else:
+                    self.wrn = f"WRN-0001-{self.cstatus}"
+
+            elif latest_stock_bt and self.coffetype.id == 1:
+                if latest_stock_bt.grn:
+                    try:
+                        grn_prefix, grn_number_part = latest_stock_bt.grn.split('-', 1)
+                        if grn_number_part[:4].isdigit():
+                            current_grn_number = int(grn_number_part[:4])
+                        else:
+                            current_grn_number = 0
+                    except (ValueError, IndexError):
+                        current_grn_number = 0
+                    if self.processtype.type_name.startswith("F"):
+                        self.grn = f"BT-{str(current_grn_number + 1).zfill(4)}-CF"
+                    else:
+                        self.grn = f"BT-{str(current_grn_number + 1).zfill(4)}-SW"
+                else:
+                    if self.processtype.type_name.startswith("F"):
+                        self.grn = f"BT-0001-CF"
+                    else:
+                        self.grn = f"BT-0001-SW"
             else:
-                self.wrn = '0001'
+                pass
 
         super().save(*args, **kwargs)
+
+    # def save(self, *args, **kwargs):
+    #     if not self.pk:
+    #         latest_stock = StockIn.objects.order_by('-wrn').first()
+    #         latest_stock_bt = StockIn.objects.order_by('-grn').first()
+
+    #         if latest_stock and self.coffetype.id == 2:
+    #             if latest_stock.wrn:
+    #                 current_wrn_number = int(latest_stock.wrn.split('-')[1])
+    #                 self.wrn = f"WRN-{str(current_wrn_number + 1).zfill(4)}-{self.cstatus}"
+    #             else:
+    #                 self.wrn = f"WRN-0001-{self.cstatus}"
+
+    #         elif latest_stock_bt and self.coffetype.id == 1:
+    #             if latest_stock_bt.grn:
+    #                 current_grn_number = int(latest_stock_bt.grn.split('-')[1])
+    #                 if self.processtype.startswith("F"): 
+    #                     self.grn = f"BT-{str(current_grn_number + 1).zfill(4)}-CF"
+    #                 else:
+    #                     self.grn = f"BT-{str(current_grn_number + 1).zfill(4)}-SW"
+    #             else:
+    #                 if self.processtype.type_name.startswith("F"): 
+    #                     self.grn = f"BT-0001-CF"
+    #                 else:
+    #                     self.grn = f"BT-0001-SW"
+    #         else:
+    #             pass
+
+    #     super().save(*args, **kwargs)
+
 
 class Stock(models.Model):
     stock_in=models.ForeignKey(StockIn,on_delete=models.CASCADE)
     warehouse=models.ForeignKey(Warehouse,on_delete=models.CASCADE)
-    section=models.ForeignKey(Section,on_delete=models.CASCADE)
+    section=models.ForeignKey(Section,on_delete=models.CASCADE, blank=True,null=True)
     cell=models.ForeignKey(Cell,on_delete=models.CASCADE)
     coffetype=models.ForeignKey(CoffeeType,on_delete=models.CASCADE)
     processtype=models.ForeignKey(ProcessType,on_delete=models.CASCADE)
     wrn = models.CharField(max_length=4, default='0000', editable=False, null=True)
+    grn = models.CharField(max_length=200, default='')
     quantity_kgs=models.IntegerField()
     bags_no=models.IntegerField()
     created_at = models.DateField(auto_now_add=True)
     moved_to=models.IntegerField(default=0)
     moisture_content=models.IntegerField()
+    cstatus=models.CharField(max_length=200,null=True)
 
     class Meta():
         db_table="stock"
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            latest_stock = StockIn.objects.order_by('-wrn').first()
 
-            if latest_stock:
-                current_wrn = int(latest_stock.wrn)
-                self.wrn = str(current_wrn).zfill(4)
-            else:
-                self.wrn = '0001'
-
-        super().save(*args, **kwargs)
 
 
     

@@ -1,5 +1,6 @@
 import React, { useEffect, useState,useRef } from "react";
 import { Toast } from "primereact/toast";
+import { Calendar } from "primereact/calendar";
 
 const StockInForm = () => {
 
@@ -16,8 +17,12 @@ const StockInForm = () => {
     const [selectedCoffeetype,setelectedCoffeetype]=useState()
     const [processtypes,setProcesstypes]=useState()
     const [selectedProcesstype,setSelectedProcesstype]=useState()
-    // const [selectedCell,setSelectedCell]=useState()
+    const [startDate,setStartDate]=useState() 
+    const [cstatus,setCStatus]=useState() 
+    
+    
     const [bags,setBags]=useState()
+    const [bagsNo,setBagsNo]=useState()
     const [quantity, setQuantity] = useState('');
     const [moisturecontent,setMoisturecontent]=useState()
 
@@ -37,22 +42,38 @@ const StockInForm = () => {
         setSelectedWarehouse(e.target.value)
         console.log(e.target.value)
 
-        function get_sections(){
+        // function get_sections(){
+        //     const requestOptions = {
+        //       method: "GET",
+        //       redirect: "follow"
+        //     };
+            
+        //     fetch(`http://127.0.0.1:8000/section/${e.target.value}/`, requestOptions)
+        //       .then((response) => response.json())
+        //       .then((result) =>{ 
+                
+        //         console.log(result)
+        //         setSection(result)
+        //       })
+        //       .catch((error) => console.error(error));
+        //   }
+        //   get_sections()
+        function get_cells(){
             const requestOptions = {
               method: "GET",
               redirect: "follow"
             };
             
-            fetch(`http://127.0.0.1:8000/section/${e.target.value}/`, requestOptions)
+            fetch(`http://127.0.0.1:8000/cell/${e.target.value}/`, requestOptions)
               .then((response) => response.json())
               .then((result) =>{ 
-                
+                console.log("cells")
                 console.log(result)
-                setSection(result)
+                setCells(result)
               })
               .catch((error) => console.error(error));
           }
-          get_sections()
+          get_cells()
     }
 
     function handlecoffeetypechange(e){
@@ -162,9 +183,11 @@ const StockInForm = () => {
         "processtype": selectedProcesstype,
         "supplier": selectedSupplier,
         "wrn": wrn,
-        "bags": bags,
+        "bags": bagsNo,
         "quantity_kgs": quantity,
-        "moisture_content":parseInt(moisturecontent)
+        "delivered_date":startDate.toISOString().split('T')[0],
+        "moisture_content":parseInt(moisturecontent),
+        "cstatus":cstatus
         });
 
         const requestOptions = {
@@ -212,7 +235,7 @@ const StockInForm = () => {
                                 ))}
                             </select>
                         </div>
-                        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        {/* <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
                                 Section
                             </label>
@@ -225,11 +248,8 @@ const StockInForm = () => {
                                 </option>
                                 ))}
                             </select>
-                        </div>
-                        
-                    </div>
-                    <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        </div> */}
+                        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
                                 Cell
                             </label>
@@ -237,11 +257,14 @@ const StockInForm = () => {
                             <option>Select Cell</option>
                             {cells && cells.map(option => (
                                 <option key={option.id} value={option.id}>
-                                    {option.name}
+                                    {option.cell_label}
                                 </option>
                                 ))}
                             </select>
                         </div>
+                    </div>
+                    <div className="flex flex-wrap -mx-3 mb-6">
+                    
                         <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
                                 Supplier
@@ -255,13 +278,18 @@ const StockInForm = () => {
                                 ))}
                             </select>
                         </div>
-                    </div>
-                    <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
                                 Coffe Type
                             </label>
-                            <select value={selectedCoffeetype} onChange={handlecoffeetypechange} className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="warehouse" required>
+                            {/* <select value={selectedCoffeetype} onChange={handlecoffeetypechange} className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="warehouse" required> */}
+                            <select
+                                value={selectedCoffeetype}
+                                onChange={handlecoffeetypechange}
+                                className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                id="warehouse"
+                                required
+                            >
                             <option>Select Coffee Type</option>
                             {coffetypes && coffetypes.map(option => (
                                 <option key={option.id} value={option.id}>
@@ -270,12 +298,15 @@ const StockInForm = () => {
                                 ))}
                             </select>
                         </div>
+                    </div>
+                    <div className="flex flex-wrap -mx-3 mb-6">
+                    
                         <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
-                                Process Type
+                                Grade
                             </label>
                             <select value={selectedProcesstype} onChange={(e)=>setSelectedProcesstype(e.target.value)} className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="warehouse" required>
-                            <option>Select Process Type</option>
+                            <option>Select Grade</option>
                             {processtypes && processtypes.map(option => (
                                 <option key={option.id} value={option.id}>
                                     {option.description}
@@ -283,9 +314,7 @@ const StockInForm = () => {
                                 ))}
                             </select>
                         </div>
-                    </div>
-                    <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="quantity">
                         Quantity
                         </label>
@@ -300,14 +329,16 @@ const StockInForm = () => {
                         required
                         />
                     </div>
+                    </div>
+                    <div className="flex flex-wrap -mx-3 mb-6">
+                    
                     <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="numberOfBags">
-                        Number of Bags
+                        Number of Bags(Est. Bags <span className="text-orange-400">{bags} Bgs</span> )
                         </label>
                         <input
-                        value={bags}
-                        // onChange={handleBagsChange}
-                        readOnly
+                        value={bagsNo}
+                        onChange={(e)=>setBagsNo(e.target.value)}
                         className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                         id="numberOfBags"
                         type="number"
@@ -315,9 +346,6 @@ const StockInForm = () => {
                         required
                         />
                     </div>
-                    
-                    </div>
-                    <div className="flex flex-wrap -mx-3 mb-6">
                     <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="quantity">
                         Moisture Content
@@ -333,11 +361,43 @@ const StockInForm = () => {
                         required
                         />
                     </div>
-                    {/* <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                    </div>
+                    <div className="flex flex-wrap -mx-3 mb-6">
+                    
+                    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="numberOfBags">
-                        Number of Bags
+                        Date
                         </label>
-                        <input
+                        <Calendar
+                            id="buttondisplay"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.value)}
+                            showIcon
+                            className="w-full md:w-14rem h-10 border-2 border-s-slate-200 rounded"
+                            />
+                        </div>
+                    {selectedCoffeetype==2 &&(
+                        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="certificationStatus">
+                                Certification Status
+                            </label>
+                            <select
+                                value={cstatus}
+                                onChange={(e) => setCStatus(e.target.value)}
+                                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                id="certificationStatus"
+                                required
+                            >
+                                <option value="">Select Certification Status</option>
+                                <option value="C">Certified</option>
+                                <option value="NC">Non Certified</option>
+                            </select>
+                        </div>
+                    )}
+                        
+
+                        
+                        {/* <input
                         value={bags}
                         // onChange={handleBagsChange}
                         readOnly
@@ -346,8 +406,8 @@ const StockInForm = () => {
                         type="number"
                         placeholder="Number of Bags"
                         required
-                        />
-                    </div> */}
+                        /> */}
+                    {/* </div> */}
                     
                     </div>
                     <div className="flex flex-wrap -mx-3 mb-6">

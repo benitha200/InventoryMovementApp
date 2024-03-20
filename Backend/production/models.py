@@ -60,21 +60,26 @@ class ProductionProcess(models.Model):
 
 
 class ProductionData(models.Model):
-    stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
-    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
-    section = models.ForeignKey(Section, on_delete=models.CASCADE)
+    stock = models.ForeignKey(
+        Stock, on_delete=models.CASCADE, null=True, blank=True)
+    warehouse = models.ForeignKey(
+        Warehouse, on_delete=models.CASCADE, null=True, blank=True)
+    section = models.ForeignKey(
+        Section, on_delete=models.CASCADE, null=True, blank=True)
     cell = models.ForeignKey(Cell, on_delete=models.CASCADE)
-    stock_quantity = models.IntegerField()
+    stock_quantity = models.IntegerField(null=True, blank=True)
     net_quantity = models.IntegerField()
     bags = models.IntegerField()
     status = models.IntegerField(default=0)
+    completion_date = models.DateField(null=True, blank=True)
     coffetype_id = models.IntegerField()
-    processtype = models.ForeignKey(ProcessType, on_delete=models.CASCADE)
+    processtype = models.ForeignKey(
+        ProcessType, on_delete=models.CASCADE, null=True, blank=True)
     batch_no = models.CharField(max_length=50, unique=False, editable=False)
     sub_batch = models.CharField(max_length=50, unique=False, editable=False)
     production_process = models.ForeignKey(
         ProductionProcess, on_delete=models.CASCADE)
-    wrn = models.CharField(max_length=200)
+    wrn = models.CharField(max_length=200, default="-")
     cell_from = models.CharField(max_length=200)
     created_at = models.DateField(auto_now_add=True)
     created_by = models.IntegerField(default=1)
@@ -89,8 +94,10 @@ class ProductionOutput(models.Model):
     output_quality = models.CharField(max_length=200)
     output_bags = models.IntegerField()
     coffetype_id = models.IntegerField()
-    processtype = models.ForeignKey(ProcessType, on_delete=models.CASCADE)
+    processtype = models.ForeignKey(
+        ProcessType, on_delete=models.CASCADE, null=True, blank=True)
     batch_no = models.CharField(max_length=50, unique=False, editable=False)
+    lot_no = models.CharField(max_length=200, null=True, blank=True)
     production_process = models.ForeignKey(
         ProductionProcess, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -130,13 +137,10 @@ class Batch(models.Model):
         db_table = "batches"
 
 
-class ProductionRequest(models.Model):
-    process_type = models.CharField(max_length=200)
-    supplier = models.CharField(max_length=200)
-    request_number = models.IntegerField()
-    quantity = models.IntegerField()
-    grade = models.CharField(max_length=200)
-    description = models.CharField(max_length=200)
+class Lots(models.Model):
+    lot_no = models.CharField(max_length=200)
+    quality = models.CharField(max_length=200)
+    created_at = models.DateField(auto_now_add=True)
 
     class Meta:
-        db_table = "production_request"
+        db_table = "lots"

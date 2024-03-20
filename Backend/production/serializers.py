@@ -23,6 +23,11 @@ class BatchSerializer(serializers.ModelSerializer):
     class Meta:
         model=Batch
         fields='__all__'
+
+class LotsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Lots
+        fields='__all__'
         
 class ProductionLogsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,13 +48,19 @@ class ProductionDataSerializer(serializers.ModelSerializer):
     # cell=CellSerializer()
     class Meta:
         model = ProductionData
-        fields = ['id','stock_quantity','net_quantity','bags','status','coffetype_id','batch_no','created_at','stock','warehouse','section','cell','processtype','production_process','wrn','sub_batch','cell_from']
+        fields = ['id','stock_quantity','net_quantity','bags','status','coffetype_id','batch_no','created_at','stock','warehouse','section',
+                  'cell','processtype','production_process','wrn','sub_batch','cell_from']
+        
+    def __init__(self, *args, **kwargs):
+        super(ProductionDataSerializer, self).__init__(*args, **kwargs)
+        self.fields['wrn'].required = False
 
 class ProductionOutputSerializer(serializers.ModelSerializer):
     production_process=ProductionProcessSerializer()
     class Meta:
         model = ProductionOutput
-        fields = ['id','output_quantity','output_bags','batch_no','created_at','warehouse','processtype','production_process','output_quality']
+        fields = ['id','output_quantity','output_bags','batch_no','created_at',
+                  'warehouse','processtype','production_process','output_quality','lot_no']
 
 class ProductionLogsSerializer(serializers.ModelSerializer):
     production = ProductionDataSerializer()
