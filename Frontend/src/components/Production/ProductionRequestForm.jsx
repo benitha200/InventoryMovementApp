@@ -58,15 +58,21 @@ const ProductionRequestForm = () => {
         let request_number_ = 2300
         let formData = [];
 
-        if (processType === "Single Origin" && suppliers.length === 1) {
+        if (processType === "Single Origin") {
+            console.log("Supplier Options:", supplierOptions);
+
+            const selectedSupplier = supplierOptions.find(option => option.value === suppliers[0]);
+            console.log("Selected Supplier:", selectedSupplier);
+
             formData = [{
                 process_type: processType,
-                supplier: suppliers[0],
+                supplier: suppliers,
                 quantity: quantities[suppliers[0]],
                 grade: grades[suppliers[0]],
                 description: descriptions[suppliers[0]],
                 request_number: request_number_
             }];
+            console.log("Form Data:", formData);
         }
         else if (processType === "Blend" && suppliers.length > 0) {
             formData = suppliers.map(supplier => ({
@@ -129,14 +135,16 @@ const ProductionRequestForm = () => {
     const handleSupplierChange = (e) => {
         const selectedSuppliers = e.value;
 
-        // If process type is "Single Origin", set the supplier directly
-        if (processType === "Single Origin") {
-            const selectedSupplier = selectedSuppliers.length > 0 ? selectedSuppliers[0] : "";
-            setSuppliers([selectedSupplier]);
-        } else {
-            // If process type is "Blend", set the suppliers array
-            setSuppliers(selectedSuppliers);
-        }
+        // // If process type is "Single Origin", set the supplier directly
+        // if (processType === "Single Origin") {
+        //     const selectedSupplier = selectedSuppliers.length > 0 ? selectedSuppliers[0] : "";
+        //     setSuppliers([selectedSupplier]);
+        // } else {
+        //     // If process type is "Blend", set the suppliers array
+        //     setSuppliers(selectedSuppliers);
+        // }
+
+        setSuppliers(selectedSuppliers);
 
         // Reset quantities, grades, and descriptions
         setQuantities({});
