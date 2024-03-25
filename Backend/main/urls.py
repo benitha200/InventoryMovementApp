@@ -98,7 +98,13 @@ urlpatterns = [
          name='production-request-create'),
     path('production-request/list/', ProductionRequestListAPIView.as_view(),
          name='production-request-list'),
-    path('generate-report/', GenerateReportAPIView.as_view(), name="generate-report"),
 
+
+    path('api/sourcing-process/create/',
+         SourcingProcessCreateAPIView.as_view(), name='sourcing-process-create'),
+    path('api/sourcing-process', SourcingProcessListAPIView.as_view(),
+         name='sourcing-process-list'),
+
+    path('generate-report/', GenerateReportAPIView.as_view(), name="generate-report"),
 
 ]
