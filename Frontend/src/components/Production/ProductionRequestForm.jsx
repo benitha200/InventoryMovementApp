@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { MultiSelect } from 'primereact/multiselect';
 import { Dropdown } from "primereact/dropdown";
+import { Toast } from "primereact/toast";
 
 const ProductionRequestForm = () => {
     const [processType, setProcessType] = useState(null);
@@ -9,31 +10,110 @@ const ProductionRequestForm = () => {
     const [grades, setGrades] = useState({});
     const [descriptions, setDescriptions] = useState({});
 
-    // Options for process type
-    const processTypeOptions = [
-        { label: "Single Origin", value: "Single Origin" },
-        { label: "Blend", value: "Blend" }
-    ];
+    const [processTypeOptions, setProcessTypeOptions] = useState([]);
+    const [supplierOptions, setSupplierOptions] = useState([]);
+    const [gradeOptions, setGradeOptions] = useState([]); // Added gradeOptions state
+    const [toastVisible, setToastVisible] = useState(false);
 
-    // Options for suppliers based on process type
-    const supplierOptions = [
-        { label: "Musasa", value: "Musasa" },
-        { label: "Mashesha", value: "Mashesha" },
-        { label: "Musha", value: "Musha" }
-    ];
+    const toast = useRef(null);
 
-    // Options for grades
-    const gradeOptions = [
-        { label: "A1", value: "A1" },
-        { label: "A2", value: "A2" },
-        { label: "Isimbi", value: "Isimbi" },
-        { label: "Speciality", value: "Speciality" }
-    ];
+    useEffect(() => {
+        // Fetch process type options
+        fetchProcessTypeOptions();
+        // Fetch initial supplier options
+        fetchSupplierOptions();
+
+        // Removed fetchGradeOptions() from here
+    }, []);
+
+    const fetchProcessTypeOptions = () => {
+        fetch("http://127.0.0.1:8000/api/sourcing-process")
+            .then(response => response.json())
+            .then(data => {
+                setProcessTypeOptions(data.map(item => ({ label: item.name, value: item.name })));
+            })
+            .catch(error => console.error("Error fetching process type options:", error));
+    };
+
+    const fetchSupplierOptions = () => {
+        fetch("http://127.0.0.1:8000/supplier/")
+            .then(response => response.json())
+            .then(data => {
+                setSupplierOptions(data.map(item => ({ label: item.name, value: item.name })));
+            })
+            .catch(error => console.error("Error fetching supplier options:", error));
+    };
+
+    const fetchGradeOptions = (processTypeId) => { // Updated fetchGradeOptions to accept processTypeId
+        fetch(`http://127.0.0.1:8000/processtype/2/`)
+            .then(response => response.json())
+            .then(data => {
+                const options = data.map(item => ({ label: item.type_name, value: item.type_name }));
+                setGradeOptions(options);
+            })
+            .catch(error => console.error("Error fetching grade options:", error));
+    };
 
     const handleSubmit = () => {
-        // Add your form submission logic here
-        console.log("Form submitted!");
+        let request_number_ = 2300
+        let formData = [];
+
+        if (processType === "Single Origin" && suppliers.length === 1) {
+            formData = [{
+                process_type: processType,
+                supplier: suppliers[0],
+                quantity: quantities[suppliers[0]],
+                grade: grades[suppliers[0]],
+                description: descriptions[suppliers[0]],
+                request_number: request_number_
+            }];
+        }
+        else if (processType === "Blend" && suppliers.length > 0) {
+            formData = suppliers.map(supplier => ({
+                process_type: processType,
+                supplier: supplier,
+                quantity: quantities[supplier],
+                grade: grades[supplier],
+                description: descriptions[supplier],
+                request_number: request_number_
+            }));
+        }
+
+        // Send form data to backend
+        Promise.all(formData.map(data => {
+            return fetch('http://127.0.0.1:8000/production-request/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Handle successful submission
+                        console.log('Production request submitted successfully');
+                        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Production request submitted successfully' });
+                    } else {
+                        // Handle error response
+                        console.error('Failed to submit production request');
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to submit production request' });
+                    }
+                })
+                .catch(error => {
+                    // Handle network error
+                    console.error('Error:', error);
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Network error occurred' });
+                });
+        }))
+            .then(() => {
+                // Handle completion if needed
+            })
+            .catch(error => {
+                // Handle any errors
+                console.error('Error:', error);
+            });
     };
+
 
     const handleProcessTypeChange = (e) => {
         setProcessType(e.value);
@@ -41,26 +121,27 @@ const ProductionRequestForm = () => {
         setQuantities({});
         setGrades({});
         setDescriptions({});
+
+        // Fetch grade options based on the selected process type
+        fetchGradeOptions(e.value); // Pass the selected process type ID to fetchGradeOptions
     };
 
     const handleSupplierChange = (e) => {
         const selectedSuppliers = e.value;
-        const newQuantities = {};
-        const newGrades = {};
-        const newDescriptions = {};
 
-        if (selectedSuppliers.length > 0) {
-            selectedSuppliers.forEach(supplier => {
-                newQuantities[supplier] = "";
-                newGrades[supplier] = "";
-                newDescriptions[supplier] = "";
-            });
+        // If process type is "Single Origin", set the supplier directly
+        if (processType === "Single Origin") {
+            const selectedSupplier = selectedSuppliers.length > 0 ? selectedSuppliers[0] : "";
+            setSuppliers([selectedSupplier]);
+        } else {
+            // If process type is "Blend", set the suppliers array
+            setSuppliers(selectedSuppliers);
         }
 
-        setSuppliers(selectedSuppliers);
-        setQuantities(newQuantities);
-        setGrades(newGrades);
-        setDescriptions(newDescriptions);
+        // Reset quantities, grades, and descriptions
+        setQuantities({});
+        setGrades({});
+        setDescriptions({});
     };
 
     return (
@@ -68,6 +149,7 @@ const ProductionRequestForm = () => {
             <span className="text-cyan-700 text-3xl font-bold font-sans mb-4">
                 Production Request
             </span>
+
             <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">Process type:</label>
                 <Dropdown
@@ -124,53 +206,59 @@ const ProductionRequestForm = () => {
                     )}
                 </>
             )}
+
             {processType === "Single Origin" && (
                 <>
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2">Supplier:</label>
                         <Dropdown
-                            value={suppliers[0]}
+                            value={suppliers}
                             options={supplierOptions}
                             onChange={handleSupplierChange}
                             placeholder="Select Supplier"
                             className="w-full"
                         />
                     </div>
-                    {suppliers.map(supplier => (
-                        <div className="mb-4" key={supplier}>
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Quantity for {supplier}:</label>
+                    {processType === "Single Origin" && suppliers.length > 0 && (
+                        <div className="mb-4">
+                            <label className="block text-gray-700 text-sm font-bold mb-2">Quantity :</label>
                             <input
                                 type="number"
-                                value={quantities[supplier] || ""}
-                                onChange={(e) => setQuantities({ ...quantities, [supplier]: e.target.value })}
+                                value={quantities[suppliers[0]] || ""}
+                                onChange={(e) => setQuantities({ ...quantities, [suppliers[0]]: e.target.value })}
                                 className="w-full appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                placeholder={`Enter Quantity for ${supplier}`}
+                                placeholder="Enter Quantity"
                             />
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Grade for {supplier}:</label>
+                            <label className="block text-gray-700 text-sm font-bold mb-2">Grade :</label>
                             <Dropdown
-                                value={grades[supplier] || ""}
+                                value={grades[suppliers[0]] || ""}
                                 options={gradeOptions}
-                                onChange={(e) => setGrades({ ...grades, [supplier]: e.value })}
-                                placeholder={`Select Grade for ${supplier}`}
+                                onChange={(e) => setGrades({ ...grades, [suppliers[0]]: e.value })}
+                                placeholder="Select Grade"
                                 className="w-full"
                             />
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Description for {supplier}:</label>
+                            <label className="block text-gray-700 text-sm font-bold mb-2">Description :</label>
                             <input
                                 type="text"
-                                value={descriptions[supplier] || ""}
-                                onChange={(e) => setDescriptions({ ...descriptions, [supplier]: e.target.value })}
+                                value={descriptions[suppliers[0]] || ""}
+                                onChange={(e) => setDescriptions({ ...descriptions, [suppliers[0]]: e.target.value })}
                                 className="w-full appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                placeholder={`Enter Description for ${supplier}`}
+                                placeholder="Enter Description"
                             />
                         </div>
-                    ))}
-                    {suppliers.length > 0 && (
+                    )}
+
+                    {suppliers.length >= 0 && (
                         <button onClick={handleSubmit} className="bg-cyan-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">Submit</button>
                     )}
                 </>
             )}
+
+            <Toast ref={toast} />
         </div>
-    );
-};
+
+    )
+}
 
 export default ProductionRequestForm;
+

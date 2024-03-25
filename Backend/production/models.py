@@ -144,3 +144,22 @@ class Lots(models.Model):
 
     class Meta:
         db_table = "lots"
+
+
+class ProductionRequest(models.Model):
+    process_type = models.CharField(max_length=200)
+    supplier = models.CharField(max_length=200)
+    request_number = models.IntegerField()
+    quantity = models.IntegerField()
+    grade = models.CharField(max_length=200)
+    description = models.CharField(max_length=200)
+
+    class Meta:
+        db_table = "production_request"
+
+
+class SourcingProcess(models.Model):
+    name = models.CharField(max_length=200)
+
+    class Meta:
+        db_table = "sourcing_process"

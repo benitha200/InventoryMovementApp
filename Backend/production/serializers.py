@@ -33,7 +33,6 @@ class LotsSerializer(serializers.ModelSerializer):
         model = Lots
         fields = '__all__'
 
-
 # class ProductionLogsSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model=ProductionLogs
@@ -84,3 +83,15 @@ class ProductionLogsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductionLogs
         fields = '__all__'
+
+
+class ProductionRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductionRequest
+        fields = '__all__'
+
+
+class SourcingProcessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SourcingProcess
+        fields = ['id', 'name']

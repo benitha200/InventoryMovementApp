@@ -586,3 +586,23 @@ class LotCreateAPIView(generics.CreateAPIView):
 class LotsListAPIView(generics.ListAPIView):
     queryset = Lots.objects.all()
     serializer_class = LotsSerializer
+
+
+class ProductionRequestCreateAPIView(generics.CreateAPIView):
+    queryset = ProductionRequest.objects.all()
+    serializer_class = ProductionRequestSerializer
+
+
+class ProductionRequestListAPIView(generics.ListAPIView):
+    queryset = ProductionRequest.objects.all()
+    serializer_class = ProductionRequestSerializer
+
+
+class SourcingProcessCreateAPIView(generics.CreateAPIView):
+    queryset = SourcingProcess.objects.all()
+    serializer_class = SourcingProcessSerializer
+
+
+class SourcingProcessListAPIView(generics.ListAPIView):
+    queryset = SourcingProcess.objects.all()
+    serializer_class = SourcingProcessSerializer
