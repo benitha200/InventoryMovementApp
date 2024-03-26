@@ -2,6 +2,7 @@ from django.db import models
 # from coffee.models import CoffeeGrades
 from coffee.models import CoffeeType,ProcessType
 from supplier.models import Supplier
+# from production.models import ProductionOutput
 
 
 # Create your models here.
@@ -97,8 +98,8 @@ class StockIn(models.Model):
                 if latest_stock.wrn:
                     try:
                         wrn_prefix, wrn_number_part = latest_stock.wrn.split('-', 1)
-                        if wrn_number_part.isdigit():
-                            current_wrn_number = int(wrn_number_part)
+                        if wrn_number_part[:4].isdigit():
+                            current_wrn_number = int(wrn_number_part[:4])
                         else:
                             current_wrn_number = 0
                     except (ValueError, IndexError):
@@ -162,14 +163,15 @@ class StockIn(models.Model):
 
 
 class Stock(models.Model):
-    stock_in=models.ForeignKey(StockIn,on_delete=models.CASCADE)
+    stock_in=models.ForeignKey(StockIn,on_delete=models.CASCADE,null=True,blank=True)
+    production_out=models.DecimalField(max_digits=10,decimal_places=2,blank=True,null=True)
     warehouse=models.ForeignKey(Warehouse,on_delete=models.CASCADE)
     section=models.ForeignKey(Section,on_delete=models.CASCADE, blank=True,null=True)
     cell=models.ForeignKey(Cell,on_delete=models.CASCADE)
     coffetype=models.ForeignKey(CoffeeType,on_delete=models.CASCADE)
     processtype=models.ForeignKey(ProcessType,on_delete=models.CASCADE)
-    wrn = models.CharField(max_length=4, default='0000', editable=False, null=True)
-    grn = models.CharField(max_length=200, default='')
+    wrn = models.CharField(max_length=200, default='', blank=True,null=True)
+    grn = models.CharField(max_length=200, default='', blank=True,null=True)
     quantity_kgs=models.IntegerField()
     bags_no=models.IntegerField()
     created_at = models.DateField(auto_now_add=True)

@@ -141,8 +141,8 @@ export default function StockData() {
             <div className="flex justify-content-between">
                 <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined onClick={clearFilter} />
                 <span className="p-input-icon-left">
-                    <i className="pi pi-search" />
-                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
+                    <i className="pi pi-search h-12" />
+                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" className='h-12 w-full pl-8 border-2 border-cyan-700'  />
                 </span>
             </div>
         );
@@ -274,6 +274,16 @@ const contributionsFilter = (value, filter) => {
                 CURRENT STOCK 
             </span>
             <div className='flex gap-3'>
+              <Link
+                to={{
+                  pathname: "/production-movement-form",
+                }}
+              >
+                <button className='bg-green-500 text-white p-2 rounded-md'>
+                  
+                  New Batch
+                </button>
+              </Link>
             <Link
                 to={{
                   pathname: "/production-movement-form",
@@ -283,6 +293,7 @@ const contributionsFilter = (value, filter) => {
                   Move to Production
                 </button>
               </Link>
+              
               {/* <Link
                 to={{
                   pathname: "/production-movement-form",

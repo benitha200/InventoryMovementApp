@@ -11,6 +11,7 @@ const Reports = () => {
   const [loading, setLoading] = useState(false);
   const [status,setStatus]=useState(false);
   const [report,setReport]=useState();
+  const [report2,setReport2]=useState();
 
   const [exportData, setExportData] = useState(null);
 
@@ -43,6 +44,19 @@ const Reports = () => {
       { label: 'Supplier', key: 'supplier', style: { fontWeight: 'bold' } },
       { label: 'Moisture Content', key: 'moisture_content', style: { fontWeight: 'bold' } },
   ];
+  const csvHeaders2 = [
+    
+    { label: 'Batch No', key: 'sub_batch', style: { fontWeight: 'bold' } },
+    { label: 'Starting Date', key: 'created_at', style: { fontWeight: 'bold' } },
+    { label: 'Completion Date', key: 'completion_date', style: { fontWeight: 'bold' } },
+    { label: 'Initial Quantity(kgs)', key: 'net_quantity', style: { fontWeight: 'bold' } },
+    { label: 'Initial Bags', key: 'bags', style: { fontWeight: 'bold' } },
+    { label: 'Output Grades', key: 'output_qualities', style: { fontWeight: 'bold' } },
+    { label: 'Output Quantity (kgs)', key: 'output_quantity', style: { fontWeight: 'bold' } },
+    { label: 'Output Bags', key: 'output_bags', style: { fontWeight: 'bold' } },
+    { label: 'MC In', key: 'mc_in', style: { fontWeight: 'bold' } },
+    { label: 'MC Out', key: 'mc_out', style: { fontWeight: 'bold' } },
+];
 
 
   const handleSubmit = (e) => {
@@ -53,6 +67,7 @@ const Reports = () => {
     myHeaders.append("Content-Type", "application/json");
 
     const raw = JSON.stringify({
+      "report":selectedReport.code,
       "start_date": startDate.toISOString().split('T')[0],
       "end_date": endtDate.toISOString().split('T')[0],
     });
@@ -67,7 +82,13 @@ const Reports = () => {
     fetch("http://127.0.0.1:8000/generate-report/", requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        setReport(result)
+        if(selectedReport.code=="SIR"){
+          setReport(result)
+        }
+        else{
+          setReport2(result)
+        }
+
         if (result.batch_no) {
             setStatus(true)
             
@@ -88,7 +109,7 @@ const Reports = () => {
 
   return (
     <div className='w-full container'>
-      <form onSubmit={handleSubmit} className='card w-2/4 justify-items-center justify-center mx-auto'>
+      <form onSubmit={handleSubmit} className='w-full sm:w-2/4 p-4 bg-white shadow-md rounded-md mx-auto mt-5'>
         <span className='text-cyan-700 text-2xl font-bold font-sans mb-5'>
           <center>GENERATE REPORT </center>
         </span>
@@ -131,7 +152,7 @@ const Reports = () => {
           <div className="flex flex-col w-full items-center">
             <Button
               label="Generate"
-              icon="pi pi-check"
+              // icon="pi pi-check"
               loading={loading}
               type='submit'
               className="bg-orange-300 mt-3 w-2/4 h-12 text-cyan-900 text-lg"
@@ -141,6 +162,11 @@ const Reports = () => {
                 {report && (
                 <CSVLink data={report} headers={csvHeaders} filename="StockInReport.csv">
                     <Button type="button" icon="pi pi-file-excel" label="Download Excel Report" className="bg-teal-400 text-gray-100 p-3" onClick={exportCSV} />
+                </CSVLink>
+                )}<br/>
+                {report2 && (
+                <CSVLink data={report2} headers={csvHeaders2} filename="BatchOutTurnReport.csv">
+                    <Button type="button" icon="pi pi-file-excel" label="Download Report" className="bg-blue-400 text-gray-100 p-3" onClick={exportCSV} />
                 </CSVLink>
                 )}
             </div>

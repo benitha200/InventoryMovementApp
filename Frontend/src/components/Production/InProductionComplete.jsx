@@ -19,23 +19,33 @@ const InProductionComplete = () => {
     const [bagsTotal, setBagsTotal] = useState(0);
     const [outputQuantity, setOutputQuantity] = useState(0);
     const [outputBags, setOutputBags] = useState(0);
-    // const [outputbags,setOutputbags]=useState();
+    const [mcOut,setMcOut]=useState();
     const [cells,setCells]=useState();
 
     // bagging off 
+    const [lotNos,setLotNos]=useState();
     const [lotNo,setLotNo]=useState();
     const [selectedQuality, setSelectedQuantity] = useState(null);
 
     const qualities = [
-        { name: 'F.SC.15.HP', code: 'F.SC.15.HP' },
-        { name: 'F.CSR.15', code: 'F.CSR.15' },
-        { name: 'F.SC.17', code: 'F.SC.17' },
-        { name: 'N.SC.15', code: 'N.SC.15' },
-        { name: 'N.SC.17', code: 'N.SC.17' },
-        { name: 'N.CSR.15', code: 'N.CSR.15' },
-        { name: 'F.SC.17.FQ', code: 'F.SC.17.FQ' },
-        { name: 'F.SC.15.FQ', code: 'F.SC.15.FQ' },
+        // { name: 'C1', label: 'C1' },
+        // { name: 'C2', label: 'C2' },
+        // { name: 'ISIMBI', label: 'ISIMBI' },
+        // { name: 'SPECIALITY', label: 'SPECIALITY' },
+        { name: 'F.SC.15', label: 'F.SC.15' },
+        { name: 'F.SC.13', label: 'F.SC.13' },
+        { name: 'F.CSR.15', label: 'F.CSR.15' },
+        { name: 'F.GTR.15', label: 'F.GTR.15' },
+        { name: 'FW.TRI', label: 'FW.TRI' },
+        { name: 'F.HPC.15', label: 'F.HPC.15' },
+        { name: 'F.UNG', label: 'F.UNG' },
+        { name: 'F.ORD', label: 'F.ORD' },
+        { name: 'FW.TT', label: 'FW.TT' },
+        { name: 'SC.15', label: 'SC.15' },
+        { name: 'SC.13', label: 'SC.13' },
+        { name: 'CSR.15', label: 'CSR.15' }
     ];
+    
 
 
     
@@ -62,6 +72,22 @@ const InProductionComplete = () => {
           })
           .catch((error) => console.error(error));
       }
+    
+      function get_lots(){
+        const requestOptions = {
+          method: "GET",
+          redirect: "follow"
+        };
+        
+        fetch(`http://127.0.0.1:8000/lots/`, requestOptions)
+          .then((response) => response.json())
+          .then((result) =>{ 
+            console.log("lots")
+            console.log(result)
+            setLotNos(result)
+          })
+          .catch((error) => console.error(error));
+      }
       
     useEffect(()=>{
 
@@ -71,7 +97,7 @@ const InProductionComplete = () => {
                 redirect: "follow",
             };
         
-            fetch(`http://127.0.0.1:8000/productionbatchdetails/?batch_no=${batch_no}`, requestOptions)
+            fetch(`http://127.0.0.1:8000/productionbatchdetails/?batch_no=${batch_no}&production_process_id=${production_process_id}`, requestOptions)
                 .then((response) => response.json())
                 .then((result) => {
                     console.log(result);
@@ -98,7 +124,7 @@ const InProductionComplete = () => {
             redirect: "follow"
             };
 
-            fetch(`http://127.0.0.1:8000/production-output-per-batch/?batch_no=${batch_no}`, requestOptions)
+            fetch(`http://127.0.0.1:8000/production-output-per-batch/?batch_no=${batch_no}&production_process_id=${production_process_id}`, requestOptions)
             .then((response) => response.json())
             .then((result) => {
                 console.log(result)
@@ -124,6 +150,7 @@ const InProductionComplete = () => {
         // "production-output-per-batch/"
         fetchbatchdetails();
         get_cells();
+        get_lots();
     },[])
     
     
@@ -142,7 +169,8 @@ const InProductionComplete = () => {
                 headers: myHeaders,
                 body: JSON.stringify({
                     batch_no: batch_no,
-                    completion_date: completiondate.toISOString().split('T')[0], 
+                    completion_date: completiondate.toISOString().split('T')[0],
+                    mc_out:mcOut
                 }),
                 redirect: "follow",
             });
@@ -229,15 +257,6 @@ const InProductionComplete = () => {
                     <span className='text-xl'>BATCH NO: {batch_no} </span>
                 </div>
             <div>
-            {/* <span className='p-2'>Completion Date</span> */}
-            {/* <input
-                type="text"
-                name="quantity"
-                value={quantitykgs}
-                onChange={(e) => setQuantityKgs(e.target.value)}
-                placeholder='Completion Date'
-                className="w-full h-12 mt- bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
-            /> */}
             <form onSubmit={handleComplete} className='flex gap-2'>
                 <Calendar value={completiondate} 
                     placeholder='Completion Date' 
@@ -246,29 +265,52 @@ const InProductionComplete = () => {
                     className='w-full border-2 border-gray-200 h-12 rounded py-2'
                     // dateFormat='yy-mm-dd'
                     />
-            
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    value={mcOut}
+                    onChange={(e) => setMcOut(e.target.value)}
+                    placeholder="Enter Moisture content"
+                    required
+                    className="md:w-14rem h-12  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+                  />
+            </div>
+            {batchOutput && (
                 <button
                     type="submit"
                     className="mx-auto pl-5 h-12 shadow bg-cyan-500 hover:bg-cyan-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
-                    >
+                >
                     Complete
                 </button>
+            )}
+
+            {!batchOutput && (
+                <button
+                    type="submit"
+                    hidden
+                    className="mx-auto pl-5 h-12 shadow bg-cyan-500 hover:bg-cyan-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
+                >
+                    Complete
+                </button>
+            )}
+
+                
             </form>
             
             </div>
             </div>
             
-            {production_process === 'Processing' && (
+            {production_process === 'processing' && (
                <div className='gap-2 m-2 p-2'>
                 
-                <div className="card bg-gray-100">
+                <div className="flex flex-col card bg-gray-100">
                 <span className='text-xl m-2 font-bold pb-5'>INPUT WRNs</span>
                     <DataTable value={batchdetails} tableStyle={{ minWidth: '50rem' }}>
-                        {/* <Column field="warehouse" header="Warehouse"></Column> */}
-                        {/* <Column field="section" header="Section"></Column> */}
+                        <Column field="processtype.type_name" header="Grade"></Column>
                         <Column field="cell.cell_label" header="Warehouse"></Column>
                         <Column field="wrn" header="WRN"></Column>
                         <Column field="net_quantity" header="Quantity"></Column>
+                        <Column field="bags" header="Bags"></Column>
                         
                     </DataTable>
                     <div className="flex gap-2 text-center mt-4">
@@ -278,7 +320,7 @@ const InProductionComplete = () => {
                     </div>
                 </div>
 
-                <div className="card bg-gray-100 mt-3">
+                <div className="flex flex-col card bg-gray-100 mt-3">
                 {/* <div className='flex flex-row justify-between'> */}
                     <span className='text-xl m-2 font-bold pb-5'>OUTPUT</span>
 
@@ -340,21 +382,23 @@ const InProductionComplete = () => {
                     </InplaceContent>
                 </Inplace>
                     <DataTable value={batchOutput} tableStyle={{ minWidth: '50rem' }}>
-                        <Column field="output_quality" header="Output"></Column>
+                        <Column field="output_quality" header="Output Grade"></Column>
+                        <Column field="warehouse" header="Warehouse"></Column>
+                        <Column field="batch_no" header="Batch no"></Column>
                         <Column field="output_quantity" header="Output Quantity"></Column>
                         <Column field="output_bags" header="Output Bags"></Column>
-                        <Column field="warehouse" header="Warehouse"></Column>
+                        
                     </DataTable>
-                    <div className="text-right mt-4">
+                    <div className="text-left mt-4">
                         <span className="font-bold">Total Stock Quantity: {outputQuantity}</span>
-                        <br />
-                        <span className="font-bold">Total Bags: {outputBags}</span>
+                        
+                        <span className="font-bold ml-5">Total Bags: {outputBags}</span>
                     </div>
                 </div>
             </div> 
             )}
 
-            {production_process === 'bagging off' && (
+            {production_process === 'Bagging Off' && (
                <div className='gap-2 m-2 p-2'>
                 
                 <div className="card bg-gray-100">
@@ -420,14 +464,23 @@ const InProductionComplete = () => {
                                         className="w-full md:w-14rem h-12  bg-gray-200 appearance-none border-2 border-gray-200 rounded text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
                                     />
                                     <span className='p-2'>Lot No</span>
-                                    <input
+                                    <Dropdown
+                                        value={lotNo}
+                                        onChange={(e) => setLotNo(e.value)}
+                                        options={lotNos && lotNos.map((lot) => ({ name: lot.lot_no, value: lot.lot_no }))}
+                                        optionLabel="name"
+                                        placeholder="Select Cell"
+                                        filter
+                                        className="w-80 md:w-14rem h-12  border-2 border-gray-200"
+                                    />
+                                    {/* <input
                                         type="text"
                                         name="quantity"
                                         value={lotNo}
                                         onChange={(e) => setLotNo(e.target.value)}
                                         placeholder='Lot No'
                                         className="w-full h-12 mt- bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
-                                    />
+                                    /> */}
 
                                     <button
                                         type="submit"

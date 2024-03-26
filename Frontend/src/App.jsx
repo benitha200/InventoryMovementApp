@@ -26,6 +26,8 @@ import InProductionComplete from "./components/Production/InProductionComplete";
 import ExportData from "./components/Export/ExportData";
 import Reports from "./components/Reports/Reports";
 import CreateLotForm from "./components/Production/CreateLotForm";
+import ProductionOutputDetails from "./components/Production/ProductionOutputDetails";
+import ProductionApproval from "./components/Production/ProductionApproval";
 
 const itemRenderer = (item) => (
   <div className='p-menuitem-content bg-cyan-700 text-slate-100'>
@@ -74,6 +76,11 @@ const App = () => {
           label: 'Stock Movement',
           template: itemRenderer,
           to: '/stockdata'
+        },
+        {
+          label: 'Production Approval',
+          template: itemRenderer,
+          to: '/production-approval'
         },
         {
           label: 'In Production',
@@ -168,11 +175,13 @@ const App = () => {
             <Route path="/currentStock" element={<CurrentStock />} />
             <Route path="/cell" element={<Cell />} />
             <Route path="/production-movement-form" element={<ProductionMovement />} />
+            <Route path="/production-approval" element={<ProductionApproval />} />
             <Route path="/in-production" element={<InProduction />} />
             <Route path="/in-production-details" element={<InProductionDetails />} />
             <Route path="/in-production-complete" element={<InProductionComplete />} />
             <Route path="/in-production-movement-form" element={<InProductionMovementForm />} />
             <Route path="/production-logs" element={<ProductionLogs />} />
+            <Route path="/production-output-details" element={<ProductionOutputDetails />} />
             <Route path="/export-data" element={<ExportData />} />
             <Route path="/report" element={<Reports/>}/>
             <Route path="/ProductionRequestForm" element={<ProductionRequestForm />} />
