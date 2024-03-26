@@ -31,6 +31,8 @@ import ProductionApproval from "./components/Production/ProductionApproval";
 import Login from "./components/Login/Login";
 import Cookies from "js-cookie";
 import Dashboard from "./components/Dashboard";
+import ProductionOutputDetails from "./components/Production/ProductionOutputDetails";
+import ProductionApproval from "./components/Production/ProductionApproval";
 
 const itemRenderer = (item) => (
   <div className='p-menuitem-content bg-cyan-700 text-slate-100'>

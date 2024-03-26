@@ -17,6 +17,7 @@ const ProductionMovement = () => {
   const [grn, setGRN] = useState('');
   const [cells,setCells]=useState('');
   const [selectedCell,setSelectedCell]=useState();
+  const [mcIn,setMcIn]=useState();
 
   //bagging off 
   const[quantity,setQuantity]=useState(); 
@@ -48,7 +49,7 @@ const ProductionMovement = () => {
       redirect: "follow"
     };
 
-    fetch("http://127.0.0.1:8000/batches/", requestOptions)
+    fetch("http://127.0.0.1:8000/productiondata/", requestOptions)
       .then((response) => response.json())
       .then((result) => {
         console.log(result)
@@ -65,6 +66,7 @@ const ProductionMovement = () => {
           throw new Error('Network response was not ok');
         }
         const result = await response.json();
+        console.log(result)
         setStockData(result);
       } catch (error) {
         console.error('Error fetching stock data:', error);
@@ -150,7 +152,8 @@ const ProductionMovement = () => {
         lotNumber: process === 'Rebagging' ? lotNumber : "",
         grn: process === 'Repassing' ? grn : "",
         cell_from: selectedCell,
-        sub_batch:newBatch
+        sub_batch:newBatch,
+        mc_in:mcIn,
       };
 
       try {
@@ -183,7 +186,7 @@ const ProductionMovement = () => {
     }
     }
     else{
-      console.log(newBatch)
+      console.log(mcIn)
       const data = {
         wrn: selectedWRNs.wrn || 0,
         quantity: quantity,
@@ -192,7 +195,8 @@ const ProductionMovement = () => {
         lotNumber: process === 'Rebagging' ? lotNumber : "",
         grn: process === 'Repassing' ? grn : "",
         cell_from: selectedCell,
-        sub_batch:newBatch
+        sub_batch:batchNo,
+        mc_in:mcIn
       };
       try {
         const response = await fetch("http://127.0.0.1:8000/api/production/create/", {
@@ -212,7 +216,7 @@ const ProductionMovement = () => {
         toast.current.show({
           severity: 'success',
           summary: 'Success',
-          detail: `${responseData.message} \n "Batch No:" ${newBatch}`
+          detail: `${responseData.message} \n "Batch No:" ${batchNo}`
         });
       } catch (error) {
         console.error('Error submitting data:', error);
@@ -225,7 +229,7 @@ const ProductionMovement = () => {
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <div className="w-2/4 p-4 bg-white shadow-md rounded-md">
+      <div className="w-full sm:w-2/4 p-4 bg-white shadow-md rounded-md">
         <span className="text-cyan-700 text-3xl font-bold font-sans mb-4">
           MOVE TO PRODUCTION
         </span>
@@ -242,64 +246,24 @@ const ProductionMovement = () => {
             className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
           />
         </div>
-        {process === 'Rebagging' && (
-          <div className="mb-4">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
-              Lot Number
-            </label>
-            <input
-              type="text"
-              value={lotNumber}
-              onChange={(e) => setLotNumber(e.target.value)}
-              placeholder="Enter Lot Number"
-              className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
-            />
-          </div>
-        )}
-        {process === 'Repassing' && (
-          <div className="mb-4">
-            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
-              GRN
-            </label>
-            <input
-              type="text"
-              value={grn}
-              onChange={(e) => setGRN(e.target.value)}
-              placeholder="Enter GRN"
-              className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
-            />
-          </div>
-        )}
         <div className="mb-4">
-        {/* <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
-            Select Batch No
-          </label>
-          <Dropdown
-            value={selectedBatch}
-            onChange={(e) => setSelectedBatch(e.value)}
-            options={batches.map((batch) => ({ label: batch.batch_no, value: batch.batch_no }))}
-            optionLabel="label"
-            placeholder="Select a Batch No"
-            className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
-          />  */}
+                  <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
+                    Moisture Content
+                  </label>
+                  <input
+                    type="text"
+                    value={mcIn}
+                    onChange={(e) => setMcIn(e.target.value)}
+                    placeholder="Enter Moisture content"
+                    required
+                    className="w-full md:w-14rem h-12  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+                  />
+            </div>
 
-          {/* <div className="flex items-center w-full gap-2">
-            <Dropdown
-                      value={selectedBatch}
-                      options={batches.map((batch) => ({ label: batch.batch_no, value: batch.batch_no }))}
-                      onChange={handleBatchDropdownChange}
-                      placeholder="Select Batch No"
-                      className="ml-2 bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
-                    />
-            <InputText
-              value={selectedBatch}
-              onChange={handleBatchInputChange}
-              defaultValue={selectedBatch}
-              placeholder="Enter Batch No"
-              className="w-full md:w-14rem bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
-            />
+
           
-          </div> */}
+        {process === 'processing' && (
+          <>
           <div className="flex items-center w-full gap-2">
             <Dropdown
               value={selectedBatch}
@@ -316,14 +280,8 @@ const ProductionMovement = () => {
               className="w-full md:w-14rem h-14 bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
             />
           </div>
-
-
-        </div>
-        
-        {process === 'Processing' && (
-          <>
           
-          <div className="flex justify-center p-2">
+          <div className="flex justify-center pt-2">
             <MultiSelect
               value={selectedWRNs}
               onChange={handleWRNChange}
@@ -342,6 +300,7 @@ const ProductionMovement = () => {
           <div key={index} className="mb-4">
             <span className='font-sans'>
               WRN: <strong className='font-sans'>{selectedWRN.wrn}</strong> |
+              Grade <strong className='font-sans'>{selectedWRN.processtype.type_name}</strong> |
               Quantity In Stock <strong className='font-sans'>{selectedWRN.quantity_kgs}</strong> |
               Bags No <strong className='font-sans'>{selectedWRN.bags_no}</strong>
             </span>
@@ -362,15 +321,8 @@ const ProductionMovement = () => {
               placeholder='Moved Bags'
               className="w-full bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50 mt-2"
             />
-            {/* <MultiSelect
-              value={formData[index]?.originCell || []}
-              onChange={(e) => handleOriginCellChange(index, e.value)}
-              options={originCellOptions}
-              optionLabel="label"
-              placeholder="Select Origin Cell"
-              maxSelectedLabels={3}
-              className="w-full border-solid border-2 border-slate-400 md:w-10rem mt-2"
-            /> */}
+            <div className="mb-4">
+        </div>
           </>
           
         ))}
@@ -390,8 +342,115 @@ const ProductionMovement = () => {
           </>
       )} 
 
+        {process === 'Rebagging'  && (
+          <div className="mb-4">
+            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
+              Lot Number
+            </label>
+            <input
+              type="text"
+              value={lotNumber}
+              onChange={(e) => setLotNumber(e.target.value)}
+              placeholder="Enter Lot Number"
+              className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+            />
+          </div>
+        )}
+        {process === 'Repassing' && (
+          <div className="mb-4">
+            {/* <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">
+              GRN
+            </label>
+            <input
+              type="text"
+              value={grn}
+              onChange={(e) => setGRN(e.target.value)}
+              placeholder="Enter GRN"
+              className="w-full md:w-14rem  bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+            /> */}
+
+               
+          {/* <div className="flex justify-center pt-2">
+            <MultiSelect
+              value={selectedWRNs}
+              onChange={handleWRNChange}
+              options={stockData}
+              optionLabel="grn"
+              filter
+              placeholder="Select GRNs"
+              maxSelectedLabels={3}
+              className="w-full border-solid border-2 border-slate-400 md:w-10rem"
+            />
+          </div> */}
+
+        <div className="flex justify-center pt-2">
+          <MultiSelect
+            value={selectedWRNs}
+            onChange={handleWRNChange}
+            options={stockData.filter(item => item.grn !== "")}
+            optionLabel="grn"
+            filter
+            placeholder="Select GRNs"
+            maxSelectedLabels={3}
+            className="w-full border-solid border-2 border-slate-400 md:w-10rem"
+          />
+        </div>
+
+        
+
+        {selectedWRNs.map((selectedWRN, index) => (
+          <>
+          <div key={index} className="mb-4">
+            <span className='font-sans'>
+              GRN: <strong className='font-sans'>{selectedWRN.grn}</strong> |
+              Quantity In Stock <strong className='font-sans'>{selectedWRN.quantity_kgs}</strong> |
+              Bags No <strong className='font-sans'>{selectedWRN.bags_no}</strong>
+            </span>
+            <input
+              type="number"
+              name={`quantity_${index}`}
+              value={formData[index]?.quantity || ''}
+              onChange={(e) => handleInputChange(index, 'quantity', e.target.value, selectedWRN)}
+              placeholder='Moved Quantity'
+              className="w-full bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+            />
+          </div>
+          <input
+              type="number"
+              name={`moved_bags_${index}`}
+              value={formData[index]?.movedBags || ''}
+              onChange={(e) => handleInputChange(index, 'movedBags', e.target.value, selectedWRN)}
+              placeholder='Moved Bags'
+              className="w-full bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50 mt-2"
+            />
+            <div className="mb-4">
+        </div>
+          </>
+          
+        ))}
+          </div>
+        )}
+        
+      
+
       {process === 'Bagging Off' && (
         <>
+                <div className="flex items-center w-full gap-2">
+                  <Dropdown
+                    value={selectedBatch}
+                    options={batches.map((batch) => ({ label: batch.sub_batch, value: batch.sub_batch }))}
+                    onChange={handleBatchDropdownChange}
+                    placeholder="Select Batch No"
+                    className="bg-gray-200 w-full h-14 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+                  />
+                  {/* <input
+                    type="text"
+                    value={selectedBatch}
+                    onChange={handleBatchInputChange}
+                    placeholder="Enter Batch No"
+                    className="w-full md:w-14rem h-14 bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-50"
+                  /> */}
+                </div>
       
                 <div className="mb-4">
                   <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="warehouse">

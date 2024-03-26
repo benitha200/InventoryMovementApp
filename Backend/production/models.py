@@ -76,17 +76,19 @@ class ProductionData(models.Model):
     processtype = models.ForeignKey(
         ProcessType, on_delete=models.CASCADE, null=True, blank=True)
     batch_no = models.CharField(max_length=50, unique=False, editable=False)
-    sub_batch = models.CharField(max_length=50, unique=False, editable=False)
-    production_process = models.ForeignKey(
-        ProductionProcess, on_delete=models.CASCADE)
-    wrn = models.CharField(max_length=200, default="-")
-    cell_from = models.CharField(max_length=200)
+    sub_batch=models.CharField(max_length=50, unique=False, editable=False)
+    production_process=models.ForeignKey(ProductionProcess,on_delete=models.CASCADE)
+    wrn=models.CharField(max_length=200,default="-")
+    cell_from=models.CharField(max_length=200)
+    is_approved=models.IntegerField(default=0)
+    mc_in=models.DecimalField(max_digits=10,decimal_places=2)
+    mc_out=models.DecimalField(max_digits=10,decimal_places=2,default=0)
     created_at = models.DateField(auto_now_add=True)
     created_by = models.IntegerField(default=1)
 
     class Meta:
-        db_table = "productiondata"
-
+        db_table="productiondata"
+        
 
 class ProductionOutput(models.Model):
     warehouse = models.CharField(max_length=200)

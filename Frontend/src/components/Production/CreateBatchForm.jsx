@@ -42,7 +42,7 @@ const CreateBatchForm = () => {
     }
   return (
     <div className="flex justify-center items-center h-screen">
-    <div className="w-2/4 p-4 bg-white shadow-md rounded-md">
+    <div className="w-full sm:w-2/4 p-4 bg-white shadow-md rounded-md">
       <span className="text-cyan-700 text-3xl font-bold font-sans ml-9">
         CREATE BATCH
       </span>

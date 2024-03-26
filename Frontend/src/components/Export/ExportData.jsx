@@ -60,7 +60,7 @@ const ExportData = () => {
     header="Lot No"
     filter
     filterPlaceholder="Search by Lot No"
-    // body={(rowData) => (rowData.coffetype === 1 ? "Green" : "Parchment")}
+    body={(rowData) => (<div class="text-cyan-700 font-bold">{rowData.lot_no}</div>)}
     />
 
 

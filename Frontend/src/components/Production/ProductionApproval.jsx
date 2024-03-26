@@ -1,82 +1,117 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Link } from 'react-router-dom';
+import { Toast } from "primereact/toast";
 
-export default function InProduction() {
+export default function ProductionApproval() {
     const [inproduction, setInproduction] = useState(null);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
 
-    // useEffect(() => {
-    //     const requestOptions = {
-    //         method: "GET",
-    //         redirect: "follow"
-    //     };
-
-    //     fetch("http://127.0.0.1:8000/production/", requestOptions)
-    //         .then((response) => response.json())
-    //         .then((result) => {
-    //             const formattedData = result.map(item => {
-    //                 return {
-    //                     id: item.id,
-    //                     warehouse: item.warehouse,
-    //                     section: item.section,
-    //                     cell: item.cell,
-    //                     coffetype: item.coffetype_id,
-    //                     processtype: item.processtype,
-    //                     production_process: item.production_process__name,
-    //                     net_quantity: item.total_net_quantity,
-    //                     batch_no:item.batch_no,
-    //                     status: item.status,
-    //                     total_bags: item.total_bags,
-    //                     created_at: item.created_at
-    //                 };
-    //             });
-    //             console.log(formattedData)
-    //             setInproduction(formattedData);
-    //         })
-    //         .catch((error) => console.error(error));
-    // }, []);
+    const toast=useRef(null)
 
     useEffect(() => {
-      const requestOptions = {
-          method: "GET",
-          redirect: "follow"
-      };
+        const requestOptions = {
+            method: "GET",
+            redirect: "follow"
+        };
+
+        fetch("http://127.0.0.1:8000/production-approvals/", requestOptions)
+            .then((response) => response.json())
+            .then((result) => {
+                console.log(result)
+                const formattedData = result.map(item => {
+                    return {
+                        id: item.id,
+                        bags: item.bags,
+                        sub_batch: item.sub_batch,
+                        cell_from: item.cell,
+                        coffetype: item.coffetype_id,
+                        processtype: item.processtype,
+                        production_process: item.production_process.name,
+                        net_quantity: item.net_quantity,
+                        batch_no:item.batch_no,
+                        status: item.status,
+                        created_at: item.created_at,
+                        is_approved:item.is_approved,
+                        wrn:item.wrn
+                    };
+                });
+                console.log(formattedData)
+                setInproduction(formattedData);
+            })
+            .catch((error) => console.error(error));
+    }, []);
+
+//     useEffect(() => {
+//       const requestOptions = {
+//           method: "GET",
+//           redirect: "follow"
+//       };
   
-      fetch("http://127.0.0.1:8000/production/", requestOptions)
-          .then((response) => response.json())
-          .then((result) => {
-              const groupedData = result.reduce((acc, item) => {
-                  const key = item.production_process__name;
-                  if (!acc[key]) {
-                      acc[key] = {
-                          production_process: item.production_process__name,
-                          total_net_quantity: parseInt(item.total_net_quantity),
-                          status: item.status,
-                          total_bags: item.total_bags,
-                          created_at: item.created_at,
-                          batch_nos: [item.batch_no]
-                      };
-                  } else {
-                      acc[key].total_net_quantity += item.total_net_quantity;
-                      acc[key].total_bags += item.total_bags;
-                      acc[key].batch_nos.push(item.batch_no);
-                      // You can aggregate other fields if needed
-                  }
+//       fetch("http://127.0.0.1:8000/production/", requestOptions)
+//           .then((response) => response.json())
+//           .then((result) => {
+//               const groupedData = result.reduce((acc, item) => {
+//                   const key = item.production_process__name;
+//                   if (!acc[key]) {
+//                       acc[key] = {
+//                           production_process: item.production_process__name,
+//                           total_net_quantity: parseInt(item.total_net_quantity),
+//                           status: item.status,
+//                           total_bags: item.total_bags,
+//                           created_at: item.created_at,
+//                           batch_nos: [item.batch_no]
+//                       };
+//                   } else {
+//                       acc[key].total_net_quantity += item.total_net_quantity;
+//                       acc[key].total_bags += item.total_bags;
+//                       acc[key].batch_nos.push(item.batch_no);
+//                       // You can aggregate other fields if needed
+//                   }
   
-                  return acc;
-              }, {});
+//                   return acc;
+//               }, {});
   
-              const formattedData = Object.values(groupedData);
-              console.log(formattedData);
+//               const formattedData = Object.values(groupedData);
+//               console.log(formattedData);
   
-              setInproduction(formattedData);
-          })
-          .catch((error) => console.error(error));
-  }, []);
+//               setInproduction(formattedData);
+//           })
+//           .catch((error) => console.error(error));
+//   }, []);
+
+    function handleApprove(rowData){
+        console.log(rowData);
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        const raw = JSON.stringify({
+        "id": rowData.id,
+        "wrn": rowData.wrn,
+        "quantity":rowData.net_quantity,
+        "bags":rowData.bags,
+        "batch_no":rowData.sub_batch
+        });
+
+        const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow"
+        };
+
+        fetch("http://127.0.0.1:8000/approve-production/", requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+            if(result.batch_no){
+                toast.current.show({ severity: 'success', summary: 'Success', detail: result.message });
+            }
+        })
+        .catch((error) => console.error(error));
+    }
   
   
     const onGlobalFilterChange = (e) => {
@@ -104,7 +139,7 @@ export default function InProduction() {
         console.log("Production clicked for row with ID:", rowData.production_process__name);
         return (
             <div className='gap-2'>
-              <Link
+              {/* <Link
                 to={{
                   pathname: "/in-production-details",
                   search: `?wrn=${rowData.wrn}&coffetype=${rowData.coffetype}&production_process=${rowData.production_process.name}
@@ -119,11 +154,12 @@ export default function InProduction() {
                   },
                 }}
                 className='m-2'
-              >
-                <button className='bg-cyan-500 text-white p-2 rounded-md'>
-                  Details
+              > */}
+                <button className='bg-green-500 text-white p-2 rounded-md' onClick={() => handleApprove(rowData)}>
+                    <i className='pi pi-check'></i> Approve
                 </button>
-              </Link>
+
+              {/* </Link> */}
               {/* <Link
                 to={{
                   pathname: "/production-movement-form",
@@ -193,8 +229,8 @@ export default function InProduction() {
     return (
         <div>
             <div className='flex justify-between'>
-                <span className='text-cyan-700 text-3xl font-bold font-sans ...'>
-                COFFEE IN PRODUCTION
+                <span className='text-cyan-700 text-2xl font-bold font-sans ...'>
+                PENDING PRODUCTION APPROVALS
             </span>
             <div className='flex gap-3'>
             {/* <Link
@@ -231,9 +267,9 @@ export default function InProduction() {
                 //   },
                 }}
               >
-                <button className='bg-green-500 text-white p-2 rounded-md'>
+                {/* <button className='bg-green-500 text-white p-2 rounded-md'>
                   Move to Another process
-                </button>
+                </button> */}
               </Link>
             </div>
             
@@ -247,24 +283,25 @@ export default function InProduction() {
                 rows={10}
                 dataKey="id"
                 globalFilter={globalFilterValue}
-                emptyMessage="No Coffe In processing data found."
+                emptyMessage="No coffee records awaiting production approval."
                 header={header}
             >
+                <Column field="created_at" header="Date" filter filterPlaceholder="Search by Created At" />
               <Column
-                field="batch_nos"
+                field="sub_batch"
                 header="Batch"
                 filter
                 filterPlaceholder="Search by Batch No"
-                filterMatchMode="custom"
-                filterFunction={(value, filter) => {
-                    return value.some(batch_no => batch_no.includes(filter));
-                }}
-                body={renderBatchNos}
+                // filterMatchMode="custom"
+                // filterFunction={(value, filter) => {
+                //     return value.some(batch_no => batch_no.includes(filter));
+                // }}
                 style={{ maxWidth: '15rem' }} // Adjust the maximum width as needed
             />
+            
 
                  <Column
-                    field="production_process__name"
+                    field="production_process"
                     header="Production Process"
                     filter
                     filterPlaceholder="Search by Status"
@@ -296,12 +333,13 @@ export default function InProduction() {
                         
                     }}
                     />
-                <Column field="total_bags" header="Total Bags" filter filterPlaceholder="Search by Process Type" />
+                <Column field="net_quantity" header="Quantity" filter filterPlaceholder="Search by WRN " />
+                <Column field="bags" header="Total Bags" filter filterPlaceholder="Search by Process Type" />
                 
                 {/* <Column field="batch_no" header="batch no" filter filterPlaceholder="Search by batch no " /> */}
-                <Column field="total_net_quantity" header="net_quantity" filter filterPlaceholder="Search by WRN " />
                 
-                <Column
+                
+                {/* <Column
                     field="status"
                     header="Status"
                     filter
@@ -313,11 +351,13 @@ export default function InProduction() {
 
                         return <span style={{ backgroundColor: bgColor, padding: '5px', borderRadius: '5px',color:color,width:'5rem' }}>{statusText}</span>;
                     }}
-                    />
-                {/* <Column field="wrn" header="WRN" filter filterPlaceholder="Search by WRN" /> */}
-                {/* <Column field="created_at" header="Date" filter filterPlaceholder="Search by Created At" /> */}
+                    /> */}
+                <Column field="wrn" header="WRN" filter filterPlaceholder="Search by WRN" />
+                
                 <Column header="Actions" body={renderActions} />
             </DataTable>
+
+            <Toast ref={toast} />
         </div>
         </div>
         

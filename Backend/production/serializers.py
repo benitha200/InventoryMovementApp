@@ -53,15 +53,16 @@ class ProductionDataGroupedSerializer(serializers.Serializer):
 
 
 class ProductionDataSerializer(serializers.ModelSerializer):
-    production_process = ProductionProcessSerializer()
-    cell = CellSerializer()
+    production_process=ProductionProcessSerializer()
+    cell=CellSerializer()
+    processtype=ProcessTypeSerializer()
     # cell=CellSerializer()
 
     class Meta:
         model = ProductionData
-        fields = ['id', 'stock_quantity', 'net_quantity', 'bags', 'status', 'coffetype_id', 'batch_no', 'created_at', 'stock', 'warehouse', 'section',
-                  'cell', 'processtype', 'production_process', 'wrn', 'sub_batch', 'cell_from']
-
+        fields = ['id','stock_quantity','net_quantity','bags','status','coffetype_id','batch_no','created_at','stock','warehouse','section',
+                  'cell','processtype','production_process','wrn','sub_batch','cell_from','mc_in','mc_out']
+        
     def __init__(self, *args, **kwargs):
         super(ProductionDataSerializer, self).__init__(*args, **kwargs)
         self.fields['wrn'].required = False

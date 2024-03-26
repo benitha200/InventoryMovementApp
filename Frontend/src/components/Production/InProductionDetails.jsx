@@ -192,7 +192,7 @@ const handleInputChange = (index, name, value,selectedBatchNo) => {
                 emptyMessage="No stock data found."
                 header={header}
             >
-        <Column field="created_on" header="Date"/>
+        <Column field="created_at" header="Date"/>
         <Column field="sub_batch" header="Batch No" filter />
         <Column
             field="coffetype"

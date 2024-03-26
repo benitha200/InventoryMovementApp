@@ -47,8 +47,8 @@ export default function StockInHistory() {
             <div className="flex justify-content-between">
                 <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined onClick={clearFilter} />
                 <span className="p-input-icon-left">
-                    <i className="pi pi-search" />
-                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
+                    <i className="pi pi-search h-12" />
+                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" className='h-12 w-full pl-8 border-2 border-cyan-700'  />
                 </span>
             </div>
         );
