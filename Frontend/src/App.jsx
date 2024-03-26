@@ -26,6 +26,7 @@ import InProductionComplete from "./components/Production/InProductionComplete";
 import ExportData from "./components/Export/ExportData";
 import Reports from "./components/Reports/Reports";
 import CreateLotForm from "./components/Production/CreateLotForm";
+import Dashboard from "./components/Dashboard";
 
 const itemRenderer = (item) => (
   <div className='p-menuitem-content bg-cyan-700 text-slate-100'>
@@ -110,6 +111,11 @@ const App = () => {
           template: itemRenderer,
           to: '/report'
         },
+        {
+          label: 'Dashboard',
+          template: itemRenderer,
+          to: '/Dashboard'
+        },
       ]
     },
     {
@@ -156,7 +162,7 @@ const App = () => {
             {/* Your existing routes */}
             <Route exact path="/" element={<SectionForm />} />
             <Route path="/stockInput" element={<StockInPage />} />
-            <Route path="/stockOut" element={<StockOutPage />} /> 
+            <Route path="/stockOut" element={<StockOutPage />} />
             <Route path="/create-batch" element={<CreateBatchForm />} />
             <Route path="/create-lot" element={<CreateLotForm />} />
             <Route path="/stock" element={<Stock />} />
@@ -174,8 +180,9 @@ const App = () => {
             <Route path="/in-production-movement-form" element={<InProductionMovementForm />} />
             <Route path="/production-logs" element={<ProductionLogs />} />
             <Route path="/export-data" element={<ExportData />} />
-            <Route path="/report" element={<Reports/>}/>
+            <Route path="/report" element={<Reports />} />
             <Route path="/ProductionRequestForm" element={<ProductionRequestForm />} />
+            <Route path="/Dashboard" element={<Dashboard />} />
           </Routes>
         </div>
       </div>
