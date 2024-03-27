@@ -26,7 +26,7 @@ import InProductionComplete from "./components/Production/InProductionComplete";
 import ExportData from "./components/Export/ExportData";
 import Reports from "./components/Reports/Reports";
 import CreateLotForm from "./components/Production/CreateLotForm";
-import ProductionOutputDetails from "./components/Production/ProductionOutputDetails";
+// import ProductionOutputDetails from "./components/Production/ProductionOutputDetails";
 import ProductionApproval from "./components/Production/ProductionApproval";
 import Login from "./components/Login/Login";
 import Cookies from "js-cookie";
