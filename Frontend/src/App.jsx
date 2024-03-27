@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import StockInPage from "./components/StockInPage";
 import StockOutPage from "./components/StockOutPage";
@@ -28,6 +28,9 @@ import Reports from "./components/Reports/Reports";
 import CreateLotForm from "./components/Production/CreateLotForm";
 import ProductionOutputDetails from "./components/Production/ProductionOutputDetails";
 import ProductionApproval from "./components/Production/ProductionApproval";
+import Dashboard from "./components/Stock/Dashboard";
+import Login from "./components/Login/Login";
+import Cookies from "js-cookie";
 
 const itemRenderer = (item) => (
   <div className='p-menuitem-content bg-cyan-700 text-slate-100'>
@@ -41,6 +44,8 @@ const itemRenderer = (item) => (
 );
 
 const App = () => {
+
+  const [token,setToken]=useState(Cookies.get('token'))
   // Your menu items
   const items = [
     {
@@ -57,6 +62,11 @@ const App = () => {
     {
       label: 'Stock',
       items: [
+        {
+          label: 'Dashboard',
+          template: itemRenderer,
+          to: '/dashboard'
+        },
         {
           label: 'Stock Input',
           template: itemRenderer,
@@ -149,7 +159,8 @@ const App = () => {
     },
   ];
 
-  return (
+  if(token){
+      return (
     <Router>
       <div className="flex flex-col md:flex-row h-screen">
         {/* Sidebar */}
@@ -162,6 +173,7 @@ const App = () => {
           <Routes>
             {/* Your existing routes */}
             <Route exact path="/" element={<SectionForm />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/stockInput" element={<StockInPage />} />
             <Route path="/stockOut" element={<StockOutPage />} /> 
             <Route path="/create-batch" element={<CreateBatchForm />} />
@@ -190,6 +202,14 @@ const App = () => {
       </div>
     </Router>
   );
+  }
+  else{
+    return(
+      <div><Login/></div>
+    );
+  }
+
+
 };
 
 export default App;

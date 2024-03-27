@@ -1,42 +1,43 @@
-# accounts/views.py
-from rest_framework import generics, permissions
+from rest_framework import status,generics
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from .serializers import UserSerializer,UserLoginSerializer
-from .models import CustomUser
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import UserSerializer,RolesSerializer
+from django.contrib.auth import authenticate
+from accounts.models import Roles
 
-class RegisterAPIView(generics.GenericAPIView):
-    serializer_class = UserSerializer
+class RegisterAPIView(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
 
-        # Get the CustomUser instance from the user object
-        custom_user = user  # Assuming user object is CustomUser instance
-        token, created = Token.objects.get_or_create(user=custom_user)
-        user_data = UserSerializer(custom_user, context=self.get_serializer_context()).data
-        return Response({
-            "user": user_data,
-            "token": token.key
-        })
     
-
-class LoginAPIView(generics.GenericAPIView):
-    serializer_class = UserLoginSerializer  
-
-    permission_classes = (permissions.AllowAny,)
-
-    def post(self, request, *args, **kwargs):
+class LoginAPIView(APIView):
+    def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
-        user = CustomUser.objects.filter(email=email).first()
-        if user and user.check_password(password):
-            token, created = Token.objects.get_or_create(user=user)
+        user = authenticate(request, email=email, password=password)
+        if user:
+            refresh = RefreshToken.for_user(user)
             return Response({
-                "user": UserSerializer(user, context=self.get_serializer_context()).data,
-                "token": token.key
-            })
-        else:
-            return Response({"error": "Invalid credentials"}, status=401)
+                'user': UserSerializer(user).data,
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            }, status=status.HTTP_200_OK)
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class RolesCreateAPIView(generics.CreateAPIView):
+    queryset=Roles.objects.all()
+    serializer_class=RolesSerializer
+
+class RolesListApiView(generics.ListAPIView):
+    queryset=Roles.objects.all()
+    serializer_class=RolesSerializer
