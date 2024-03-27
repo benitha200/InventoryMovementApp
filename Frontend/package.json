@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "chart.js": "^4.4.2",
+    "@moesaid/cleopatra": "^1.1.1",
+    "js-cookie": "^3.0.5",
     "lucide": "^0.336.0",
     "primeflex": "^3.3.1",
     "primeicons": "^6.0.1",
