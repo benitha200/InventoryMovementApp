@@ -155,7 +155,7 @@ const ProductionRequestForm = () => {
     return (
         <div className="bg-white shadow-md rounded px-4 pt-6 pb-8 mb-4 mx-auto max-w-md">
             <span className="text-cyan-700 text-3xl font-bold font-sans mb-4">
-                Production Request
+                Production Order
             </span>
 
             <div className="mb-4">
@@ -215,7 +215,7 @@ const ProductionRequestForm = () => {
                 </>
             )}
 
-            {processType === "Single Origin" && (
+            {processType === "Single" && (
                 <>
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2">Supplier:</label>
@@ -227,7 +227,7 @@ const ProductionRequestForm = () => {
                             className="w-full"
                         />
                     </div>
-                    {processType === "Single Origin" && suppliers.length > 0 && (
+                    {processType === "Single" && suppliers.length > 0 && (
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2">Quantity :</label>
                             <input

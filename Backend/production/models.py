@@ -146,7 +146,6 @@ class Lots(models.Model):
 
     class Meta:
         db_table = "lots"
-<<<<<<< HEAD
 
 
 class ProductionRequest(models.Model):
@@ -166,5 +165,3 @@ class SourcingProcess(models.Model):
 
     class Meta:
         db_table = "sourcing_process"
-=======
->>>>>>> 7c60271 (changes)

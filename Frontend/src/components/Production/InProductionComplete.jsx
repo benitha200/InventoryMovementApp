@@ -469,7 +469,7 @@ const InProductionComplete = () => {
                                         onChange={(e) => setLotNo(e.value)}
                                         options={lotNos && lotNos.map((lot) => ({ name: lot.lot_no, value: lot.lot_no }))}
                                         optionLabel="name"
-                                        placeholder="Select Cell"
+                                        placeholder="Select Lot No"
                                         filter
                                         className="w-80 md:w-14rem h-12  border-2 border-gray-200"
                                     />
@@ -484,7 +484,7 @@ const InProductionComplete = () => {
 
                                     <button
                                         type="submit"
-                                        className="mx-auto p-2 shadow w-2/4 bg-cyan-500 hover:bg-cyan-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
+                                        className="mx-auto p-2 h-12 shadow w-2/4 bg-cyan-500 hover:bg-cyan-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
                                     >
                                         Submit
                                     </button>

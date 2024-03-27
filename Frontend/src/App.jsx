@@ -27,7 +27,7 @@ import ExportData from "./components/Export/ExportData";
 import Reports from "./components/Reports/Reports";
 import CreateLotForm from "./components/Production/CreateLotForm";
 // import ProductionOutputDetails from "./components/Production/ProductionOutputDetails";
-import ProductionApproval from "./components/Production/ProductionApproval";
+// import ProductionApproval from "./components/Production/ProductionApproval";
 import Login from "./components/Login/Login";
 import Cookies from "js-cookie";
 import Dashboard from "./components/Dashboard";
@@ -105,7 +105,7 @@ const App = () => {
           to: '/production-logs'
         },
         {
-          label: 'Production Request',
+          label: 'Production Order',
           template: itemRenderer,
           to: '/ProductionRequestForm'
         },
@@ -160,14 +160,112 @@ const App = () => {
       separator: true
     },
   ];
+  const items2 = [
+    {
+      template: () => (
+        <span className="inline-flex align-items-center gap-1 px-2 py-2 bg-cyan-700 text-slate-100">
+          {/* Your SVG or icon */}
+          <span className="mx-2 font-bold text-lg text-slate-0">Stock Activities</span>
+        </span>
+      )
+    },
+    {
+      separator: true
+    },
+    {
+      label: 'Stock',
+      items: [
+        {
+          label: 'Dashboard',
+          template: itemRenderer,
+          to: '/dashboard'
+        },
+        {
+          label: 'Stock Input',
+          template: itemRenderer,
+          to: '/stockInput'
+        },
+        {
+          label: 'Create Batch',
+          template: itemRenderer,
+          to: '/create-batch'
+        },
+        {
+          label: 'Stock Movement',
+          template: itemRenderer,
+          to: '/stockdata'
+        },
+        {
+          label: 'In Production',
+          template: itemRenderer,
+          to: '/in-production'
+        },
+        {
+          label: 'Production Logs',
+          template: itemRenderer,
+          to: '/production-logs'
+        },
+        {
+          label: 'Export',
+          template: itemRenderer,
+          to: '/export-data'
+        },
+        {
+          label: 'Current Stock',
+          template: itemRenderer,
+          to: '/stock'
+        },
+        {
+          label: 'Reports',
+          template: itemRenderer,
+          to: '/report'
+        },
+      ]
+    },
+    {
+      label: 'Warehouse Info',
+      items: [
+        {
+          label: 'Add Warehouse',
+          template: itemRenderer,
+          to: '/warehouseForm'
+        },
+        {
+          label: 'Add Section',
+          template: itemRenderer,
+          to: '/sectionForm'
+        },
+        {
+          label: 'Add Supplier',
+          template: itemRenderer,
+          to: '/supplier'
+        },
+        {
+          label: 'Add Cell',
+          template: itemRenderer,
+          to: '/cell'
+        }
+      ]
+    },
+    {
+      separator: true
+    },
+  ];
 
-  if(Cookies.get){
+  if(token){
       return (
     <Router>
       <div className="flex flex-col md:flex-row h-screen">
-        {/* Sidebar */}
+        
         <div className="bg-cyan-700 w-50 px-4 py-6 text-cyan-50 overflow-auto">
-          <Menu model={items} className="w-full h-full bg-cyan-700 w-50 px-4 py-6 text-cyan-50" />
+          
+    {Cookies.get("user") && Cookies.get("user") === 1 ?(
+      <Menu model={items} className="w-full h-full bg-cyan-700 w-50 px-4 py-6 text-cyan-50" />
+    ):(
+      <Menu model={items2} className="w-full h-full bg-cyan-700 w-50 px-4 py-6 text-cyan-50" />
+    )
+    }
+          
         </div>
 
         {/* Main content area */}

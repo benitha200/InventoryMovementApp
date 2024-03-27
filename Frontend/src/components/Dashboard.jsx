@@ -1,10 +1,61 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 import { Card } from 'primereact/card';
 import { Panel } from 'primereact/panel';
 import { Chart } from 'primereact/chart';
 
 const Dashboard = () => {
-    // Define your data and options for the charts here
+    const [stockData, setStockData] = useState([]);
+    const [totalQuantityGreen, setTotalQuantityGreen] = useState(0);
+    const [totalQuantityParch, setTotalQuantityParch] = useState(0);
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const response = await fetch("http://127.0.0.1:8000/stockdata/");
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            setStockData(data);
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+
+        fetchData();
+      }, []);
+
+      useEffect(() => {
+        // Calculate total quantity where coffeetype.id is 1
+        const totalgreen = stockData.reduce((acc, item) => {
+          if (item.coffetype.id === 1) {
+            return acc + item.quantity_kgs;
+          }
+          return acc;
+        }, 0);
+        const totalparch = stockData.reduce((acc, item) => {
+            if (item.coffetype.id === 2) {
+              return acc + item.quantity_kgs;
+            }
+            return acc;
+          }, 0);
+        setTotalQuantityParch(totalparch);
+        setTotalQuantityGreen(totalgreen);
+      }, [stockData]);
+    
+
+    // function get_stockdata(){
+    //     const requestOptions = {
+    //         method: "GET",
+    //         redirect: "follow"
+    //       };
+          
+    //       fetch("http://127.0.0.1:8000/stockdata/", requestOptions)
+    //         .then((response) => response.json())
+    //         .then((result) => console.log(result))
+    //         .catch((error) => console.error(error));
+    // }
     const lineData = {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
         datasets: [
@@ -58,24 +109,34 @@ const Dashboard = () => {
 
     return (
         <div>
-            <div className="card-container flex flex-wrap">
-                <Card title="Parchment" className="relative m-2 flex flex-col rounded-xl bg-white bg-clip-border text-cyan-700 shadow-md" style={{ width: '20%' }}>
-                    <p className="m-0">Qty: 5000 Kgs</p>
+            <div className="card-container flex flex-wrap mx-auto">
+                <Card className="w-2/12 relative m-2 flex flex-col rounded-xl bg-emerald-100 bg-clip-border text-black shadow-md">
+                    <i className="pi pi-shopping-bag" style={{ fontSize: '2em', alignSelf: 'center' }}></i>
+                    <h2 className='text-2xl font-serif font-bold'>Parchment</h2>
+                    <p className="m-0 text-xl font-serif font-bold">Qty: {totalQuantityParch} Kgs</p>
                 </Card>
-                <Card title="Green" className="relative m-2 flex flex-col rounded-xl bg-white bg-clip-border text-cyan-700 shadow-md" style={{ width: '18%' }}>
-                    <p className="m-0">Qty: 5000 Kgs</p>
+
+                <Card className=" w-2/12 relative m-2 flex flex-col rounded-xl bg-yellow-100 bg-clip-border text-black shadow-md" >
+                    <i className="pi pi-briefcase" style={{ fontSize: '2em', alignSelf: 'center' }}></i>
+                    <h2 className='text-2xl font-bold font-serif'>Green</h2>
+                    <p className="m-0 text-xl font-serif font-bold">Qty: {totalQuantityGreen} Kgs</p>
                 </Card>
-                <Card title="GTRs" className="relative m-2 flex flex-col rounded-xl bg-white bg-clip-border text-cyan-700 shadow-md" style={{ width: '17%' }}>
-                    <p className="m-0">Qty: 200 Kgs</p>
+                <Card className="w-2/12 relative m-2 flex flex-col rounded-xl bg-teal-100 bg-clip-border text-black shadow-md" >
+                        <i className="pi pi-shopping-bag" style={{ fontSize: '2em', alignSelf: 'center' }}></i>
+                        <h2 className='text-2xl font-bold font-serif'>Export</h2>
+                        <p className="m-0 text-xl font-serif font-bold ">300 Kgs</p>
+                 </Card>
+
+                <Card className="w-2/12 relative m-2 flex flex-col rounded-xl bg-blue-100 bg-clip-border text-black shadow-md">
+                    <i className="pi pi-shopping-bag" style={{ fontSize: '2em', alignSelf: 'center' }}></i>
+                    <h2 className='text-2xl font-bold font-serif'>GTRs + CSR</h2>
+                    <p className="m-0 text-xl font-serif font-bold">Qty: 200 Kgs</p>
                 </Card>
-                <Card title="CSRs" className="relative m-2 flex flex-col rounded-xl bg-white bg-clip-border text-cyan-700 shadow-md" style={{ width: '17%' }}>
-                    <p className="m-0">Qty: 100 Kgs</p>
-                </Card>
-                <Card title="Triage" className="relative m-2 flex flex-col rounded-xl bg-white bg-clip-border text-cyan-700 shadow-md" style={{ width: '20%' }}>
-                    <p className="m-0">Qty: 300 Kgs</p>
-                </Card>
+                
+           
+
             </div>
-            <div className="chart-container flex">
+            <div className="chart-container flex w-full">
                 <Card className="relative m-2 flex flex-col rounded-xl bg-white bg-clip-border text-cyan-700" style={{ width: '900px' }}>
                     <Panel header={<div className="text-cyan-700">Monthly Supplied Coffee</div>} style={{ background: 'transparent' }}>
                         <Chart type="line" data={lineData} options={LinechartOptions} />
