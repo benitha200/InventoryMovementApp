@@ -26,13 +26,6 @@ const ProductionMovement = () => {
   const toast = useRef(null)
   const toast2 = useRef(null)
 
-  // const originCellOptions = [
-  //   { label: 'A1', value: 'A1' },
-  //   { label: 'A2', value: 'A2' },
-  //   { label: 'B1', value: 'B1' },
-  //   { label: 'B2', value: 'B2' },
-  //   // Add more origin cell options as needed
-  // ];
 
   function get_production_process() {
     const requestOptions = {

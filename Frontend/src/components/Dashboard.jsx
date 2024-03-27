@@ -3,7 +3,7 @@ import { Card } from 'primereact/card';
 import { Panel } from 'primereact/panel';
 import { Chart } from 'primereact/chart';
 
-const BasicDemo = () => {
+const Dashboard = () => {
     // Define your data and options for the charts here
     const lineData = {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -91,4 +91,4 @@ const BasicDemo = () => {
     );
 };
 
-export default BasicDemo;
+export default Dashboard;

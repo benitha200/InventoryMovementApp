@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import StockInPage from "./components/StockInPage";
 import StockOutPage from "./components/StockOutPage";
@@ -26,6 +26,10 @@ import InProductionComplete from "./components/Production/InProductionComplete";
 import ExportData from "./components/Export/ExportData";
 import Reports from "./components/Reports/Reports";
 import CreateLotForm from "./components/Production/CreateLotForm";
+import ProductionOutputDetails from "./components/Production/ProductionOutputDetails";
+import ProductionApproval from "./components/Production/ProductionApproval";
+import Login from "./components/Login/Login";
+import Cookies from "js-cookie";
 import Dashboard from "./components/Dashboard";
 
 const itemRenderer = (item) => (
@@ -40,6 +44,8 @@ const itemRenderer = (item) => (
 );
 
 const App = () => {
+
+  const [token,setToken]=useState(Cookies.get('token'))
   // Your menu items
   const items = [
     {
@@ -56,6 +62,11 @@ const App = () => {
     {
       label: 'Stock',
       items: [
+        {
+          label: 'Dashboard',
+          template: itemRenderer,
+          to: '/dashboard'
+        },
         {
           label: 'Stock Input',
           template: itemRenderer,
@@ -75,6 +86,11 @@ const App = () => {
           label: 'Stock Movement',
           template: itemRenderer,
           to: '/stockdata'
+        },
+        {
+          label: 'Production Approval',
+          template: itemRenderer,
+          to: '/production-approval'
         },
         {
           label: 'In Production',
@@ -111,11 +127,6 @@ const App = () => {
           template: itemRenderer,
           to: '/report'
         },
-        {
-          label: 'Dashboard',
-          template: itemRenderer,
-          to: '/Dashboard'
-        },
       ]
     },
     {
@@ -148,7 +159,8 @@ const App = () => {
     },
   ];
 
-  return (
+  if(Cookies.get){
+      return (
     <Router>
       <div className="flex flex-col md:flex-row h-screen">
         {/* Sidebar */}
@@ -161,8 +173,9 @@ const App = () => {
           <Routes>
             {/* Your existing routes */}
             <Route exact path="/" element={<SectionForm />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/stockInput" element={<StockInPage />} />
-            <Route path="/stockOut" element={<StockOutPage />} />
+            <Route path="/stockOut" element={<StockOutPage />} /> 
             <Route path="/create-batch" element={<CreateBatchForm />} />
             <Route path="/create-lot" element={<CreateLotForm />} />
             <Route path="/stock" element={<Stock />} />
@@ -174,20 +187,29 @@ const App = () => {
             <Route path="/currentStock" element={<CurrentStock />} />
             <Route path="/cell" element={<Cell />} />
             <Route path="/production-movement-form" element={<ProductionMovement />} />
+            <Route path="/production-approval" element={<ProductionApproval />} />
             <Route path="/in-production" element={<InProduction />} />
             <Route path="/in-production-details" element={<InProductionDetails />} />
             <Route path="/in-production-complete" element={<InProductionComplete />} />
             <Route path="/in-production-movement-form" element={<InProductionMovementForm />} />
             <Route path="/production-logs" element={<ProductionLogs />} />
+            <Route path="/production-output-details" element={<ProductionOutputDetails />} />
             <Route path="/export-data" element={<ExportData />} />
-            <Route path="/report" element={<Reports />} />
+            <Route path="/report" element={<Reports/>}/>
             <Route path="/ProductionRequestForm" element={<ProductionRequestForm />} />
-            <Route path="/Dashboard" element={<Dashboard />} />
           </Routes>
         </div>
       </div>
     </Router>
   );
+  }
+  else{
+    return(
+      <div><Login/></div>
+    );
+  }
+
+
 };
 
 export default App;
